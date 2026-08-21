@@ -5,7 +5,7 @@
 - Name: nymrel-swarm-studio
 - Organization: Nymrel (Parent: JalenBuilds LLC)
 - Primary URL: https://nymrel.com/products/swarm-studio
-- Contact: contact@jalenbuilds.com
+- Contact: contact@nymrel.com
 - License: MIT License
 
 ## Key Capabilities

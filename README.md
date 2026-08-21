@@ -175,4 +175,4 @@ Tests cover:
 Distributed under the **MIT License**. See [`LICENSE`](file:///C:/Users/johns/Desktop/nymrel-swarm-studio/LICENSE) for details.
 
 Copyright (c) 2026 **Nymrel / JalenBuilds LLC**  
-Contact: `contact@jalenbuilds.com` • [https://jalenbuilds.com](https://jalenbuilds.com)
+Contact: `contact@nymrel.com` • [https://jalenbuilds.com](https://jalenbuilds.com)

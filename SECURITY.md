@@ -2,7 +2,7 @@
 
 ## Reporting Security Vulnerabilities
 
-If you discover a vulnerability in Nymrel Swarm Studio, please report it privately to our security team at `security@jalenbuilds.com` or `contact@jalenbuilds.com`. Please **do not** open public GitHub issues for undisclosed vulnerabilities.
+If you discover a vulnerability in Nymrel Swarm Studio, please report it privately to our security team at `security@jalenbuilds.com` or `contact@nymrel.com`. Please **do not** open public GitHub issues for undisclosed vulnerabilities.
 
 ## Threat Model & Surety Guarantees
 
