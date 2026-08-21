@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "node --test test/**/*.test.js",
-    "start": "vite preview"
+    "start": "vite preview",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "clsx": "^2.1.1",
