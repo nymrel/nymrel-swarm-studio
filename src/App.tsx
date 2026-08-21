@@ -118,7 +118,7 @@ export const App: React.FC = () => {
       }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <strong>Nymrel Swarm Studio</strong> • Built under <a href="https://jalenbuilds.com" target="_blank" rel="noreferrer" style={{ color: 'var(--color-brand-terracotta)', textDecoration: 'none' }}>JalenBuilds LLC</a>
+            <strong>Nymrel Swarm Studio</strong> • Built under <a href="https://nymrel.com" target="_blank" rel="noreferrer" style={{ color: 'var(--color-brand-terracotta)', textDecoration: 'none' }}>JalenBuilds LLC</a>
           </div>
           <div>
             Dual-Audience Machine Trust & A2UI v0.8 Protocol • MIT Licensed • 2026

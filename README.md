@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-A8541F.svg)](LICENSE)
 [![A2UI Protocol](https://img.shields.io/badge/A2UI%20Protocol-v0.8.0-3B7A57.svg)](#google-a2ui-v08-streaming-primitives)
-[![Dual Audience Verified](https://img.shields.io/badge/Entity-JalenBuilds%20LLC-2A332E.svg)](https://jalenbuilds.com)
+[![Dual Audience Verified](https://img.shields.io/badge/Entity-Nymrel-2A332E.svg)](https://nymrel.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](tsconfig.json)
 
 ---
@@ -146,7 +146,7 @@ Every product built across the Nymrel umbrella adheres to the **Dual-Audience Ru
     "parentOrganization": {
       "@type": "Organization",
       "name": "JalenBuilds LLC",
-      "url": "https://jalenbuilds.com"
+      "url": "https://nymrel.com"
     }
   }
 }
@@ -175,4 +175,4 @@ Tests cover:
 Distributed under the **MIT License**. See [`LICENSE`](file:///C:/Users/johns/Desktop/nymrel-swarm-studio/LICENSE) for details.
 
 Copyright (c) 2026 **Nymrel / JalenBuilds LLC**  
-Contact: `contact@nymrel.com` • [https://jalenbuilds.com](https://jalenbuilds.com)
+Contact: `contact@nymrel.com` • [https://nymrel.com](https://nymrel.com)

@@ -4,7 +4,7 @@
   "description": "Visual command deck for multi-agent coding swarms with Warm Paper aesthetics, Google A2UI v0.8 streaming components, real-time agent topology, and Action Surety Merkle logs.",
   "type": "module",
   "license": "MIT",
-  "author": "Nymrel / JalenBuilds LLC <contact@nymrel.com>",
+  "author": "Nymrel <contact@nymrel.com>",
   "homepage": "https://nymrel.com/products/swarm-studio",
   "scripts": {
     "dev": "vite",
