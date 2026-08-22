@@ -1,0 +1,98 @@
+name: All Things Agentic — Relay
+
+on:
+  pull_request:
+    paths:
+      - "competition/all-things-agentic/**"
+      - ".github/workflows/all-things-agentic-relay.yml"
+  push:
+    branches: [main]
+    paths:
+      - "competition/all-things-agentic/**"
+      - ".github/workflows/all-things-agentic-relay.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: relay-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.13"]
+
+    defaults:
+      run:
+        working-directory: competition/all-things-agentic
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Compile provider-neutral code and tests
+        run: python -m compileall -q relay_core relay_google tests
+
+      - name: Run deterministic core and adapter tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest discover -s tests -v
+
+  google-contract:
+    name: Google ADK package contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: competition/all-things-agentic
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: competition/all-things-agentic/pyproject.toml
+
+      - name: Install bounded project dependencies
+        run: python -m pip install --disable-pip-version-check .
+
+      - name: Verify ADK app and Gemini model contract
+        run: |
+          python - <<'PY'
+          from relay_agent.agent import MODEL, app, root_agent
+
+          assert MODEL == "gemini-3.5-flash"
+          assert root_agent.name == "relay_operator"
+          assert app.name == "relay_agent"
+          tool_names = {getattr(tool, "name", None) or getattr(tool, "__name__", "") for tool in root_agent.tools}
+          assert "request_human_approval" in tool_names
+          assert not {"approve", "deploy", "merge", "pay", "publish"} & tool_names
+          print("Relay ADK contract: PASS")
+          PY
+
+      - name: Build source and wheel distributions
+        run: |
+          python -m pip install --disable-pip-version-check "build>=1.2,<2"
+          python -m build
+          python - <<'PY'
+          from pathlib import Path
+
+          wheels = list(Path("dist").glob("*.whl"))
+          sdists = list(Path("dist").glob("*.tar.gz"))
+          assert len(wheels) == 1, wheels
+          assert len(sdists) == 1, sdists
+          print(wheels[0])
+          print(sdists[0])
+          PY
