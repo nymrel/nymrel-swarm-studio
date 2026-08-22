@@ -119,6 +119,7 @@ jobs:
               "step_id": "validate",
               "worker_id": "validator-1",
               "capability": "validation",
+              "attempt": 1,
               "revision": 3,
               "idempotency_key": "run_123:validate:1",
           }
@@ -132,6 +133,7 @@ jobs:
           }
           decoded = _decode_push(wrapped)
           assert decoded.worker_id == "validator-1"
+          assert decoded.attempt == 1
           assert decoded.idempotency_key == "run_123:validate:1"
           response = TestClient(app).get("/healthz")
           assert response.status_code == 200
