@@ -9,6 +9,10 @@ from typing import Protocol
 from .models import RunState
 
 
+class ConcurrentMutationError(RuntimeError):
+    """The caller attempted to overwrite a newer run revision."""
+
+
 class RunStore(Protocol):
     def create(self, run: RunState) -> None: ...
 
@@ -20,7 +24,7 @@ class RunStore(Protocol):
 
 
 class InMemoryRunStore:
-    """Thread-safe test/demo store with copy-on-read and copy-on-write semantics."""
+    """Thread-safe test/demo store with optimistic revision checks."""
 
     def __init__(self) -> None:
         self._runs: dict[str, RunState] = {}
@@ -30,6 +34,8 @@ class InMemoryRunStore:
         with self._lock:
             if run.run_id in self._runs:
                 raise ValueError(f"run already exists: {run.run_id}")
+            if run.revision != 0:
+                raise ValueError("new runs must start at revision 0")
             self._runs[run.run_id] = copy.deepcopy(run)
 
     def get(self, run_id: str) -> RunState | None:
@@ -39,8 +45,14 @@ class InMemoryRunStore:
 
     def put(self, run: RunState) -> None:
         with self._lock:
-            if run.run_id not in self._runs:
+            stored = self._runs.get(run.run_id)
+            if stored is None:
                 raise KeyError(f"unknown run: {run.run_id}")
+            if stored.revision != run.revision:
+                raise ConcurrentMutationError(
+                    f"stale run revision: expected {stored.revision}, got {run.revision}"
+                )
+            run.revision += 1
             self._runs[run.run_id] = copy.deepcopy(run)
 
     def list_run_ids(self) -> list[str]:
