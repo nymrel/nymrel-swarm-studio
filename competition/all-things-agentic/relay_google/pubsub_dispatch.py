@@ -19,6 +19,7 @@ class DispatchEnvelope:
     schema: str
     run_id: str
     step_id: str
+    worker_id: str
     capability: str
     revision: int
     idempotency_key: str
@@ -55,6 +56,7 @@ class PubSubDispatcher:
         for label, value in (
             ("run_id", envelope.run_id),
             ("step_id", envelope.step_id),
+            ("worker_id", envelope.worker_id),
             ("capability", envelope.capability),
             ("idempotency_key", envelope.idempotency_key),
         ):
