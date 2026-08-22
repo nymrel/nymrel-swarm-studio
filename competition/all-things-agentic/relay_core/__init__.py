@@ -1,5 +1,6 @@
 from .engine import RelayEngine
 from .models import (
+    JSONValue,
     ApprovalDecision,
     ApprovalRequest,
     EvidenceReceipt,
@@ -15,6 +16,7 @@ from .serde import run_from_document, run_to_document
 from .store import ConcurrentMutationError, InMemoryRunStore, RunStore
 
 __all__ = [
+    "JSONValue",
     "ApprovalDecision",
     "ApprovalRequest",
     "ConcurrentMutationError",
