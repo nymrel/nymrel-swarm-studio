@@ -104,6 +104,7 @@ class RunState:
     created_at: str
     updated_at: str
     max_parallel: int
+    revision: int
     steps: dict[str, StepState]
     approvals: dict[str, ApprovalRequest] = field(default_factory=dict)
     receipts: dict[str, EvidenceReceipt] = field(default_factory=dict)
