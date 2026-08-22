@@ -205,6 +205,7 @@ def dispatch_ready_step(
                 schema="nymrel.relay.dispatch.v1",
                 run_id=run_id,
                 step_id=step.definition.step_id,
+                worker_id=worker_id,
                 capability=step.definition.capability,
                 revision=run.revision,
                 idempotency_key=key,
@@ -216,6 +217,7 @@ def dispatch_ready_step(
             "message_id": message_id,
             "run_id": run_id,
             "step_id": step.definition.step_id,
+            "worker_id": worker_id,
             "idempotency_key": key,
         }
     except (KeyError, PermissionError, RuntimeError, TypeError, ValueError) as exc:
