@@ -387,6 +387,58 @@ export function createInitialSuretyLogs(): { logs: ActionSuretyEvent[], root: st
   return { logs: logs.reverse(), root: prevRoot };
 }
 
+export function isAgentBlocked(agent: Agent): boolean {
+  return agent.status === 'blocked';
+}
+
+export interface AgentCycleResult {
+  agents: Agent[];
+  /** Workers frozen this cycle: no token delta, heartbeat, or memory drift. */
+  frozenAgentIds: string[];
+}
+
+/**
+ * Advance one simulation cycle for every eligible worker. Blocked workers are
+ * frozen in place (tokens, lastPing, memory untouched) while all other workers
+ * advance independently — one blocked provider can never pause the fleet tick.
+ * Deterministic when `random` is injected; defaults to Math.random.
+ */
+export function advanceAgentCycle(
+  agents: Agent[],
+  nowMs: number,
+  random: () => number = Math.random
+): AgentCycleResult {
+  const frozenAgentIds: string[] = [];
+
+  const nextAgents = agents.map(agent => {
+    if (isAgentBlocked(agent)) {
+      frozenAgentIds.push(agent.id);
+      return agent;
+    }
+    const delta = Math.floor(random() * (agent.tokenRate * 2.5)) + 10;
+    return {
+      ...agent,
+      totalTokens: agent.totalTokens + delta,
+      lastPing: nowMs,
+      memoryUsageMb: Math.max(48, Math.min(2400, agent.memoryUsageMb + (Math.floor(random() * 7) - 3)))
+    };
+  });
+
+  return { agents: nextAgents, frozenAgentIds };
+}
+
+/**
+ * Freeze one worker behind a block. Observability/scheduling isolation only:
+ * fencingGen (one-writer authority) is never read or mutated here.
+ */
+export function markAgentBlocked(agents: Agent[], agentId: string, reason: string): Agent[] {
+  return agents.map(agent =>
+    agent.id === agentId && !isAgentBlocked(agent)
+      ? { ...agent, status: 'blocked' as const, blockedReason: reason }
+      : agent
+  );
+}
+
 export function computeTokenStats(agents: Agent[]): TokenEfficiencyStats {
   let localGpuTokens = 0;
   let edgeWorkersTokens = 0;

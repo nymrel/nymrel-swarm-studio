@@ -1,6 +1,6 @@
 export type AgentProvider = 'openai' | 'anthropic' | 'google' | 'ollama' | 'cloudflare';
 
-export type AgentStatus = 'active' | 'thinking' | 'waiting_approval' | 'idle' | 'sandboxed';
+export type AgentStatus = 'active' | 'thinking' | 'waiting_approval' | 'idle' | 'sandboxed' | 'blocked';
 
 export type HardwareTier = 'Local RTX 4090' | 'Edge Workers AI' | 'Frontier Cloud';
 
@@ -11,6 +11,8 @@ export interface Agent {
   model: string;
   role: string;
   status: AgentStatus;
+  /** Present only while the worker is frozen by a provider or policy block. */
+  blockedReason?: string;
   activeTask: string;
   tokenRate: number; // t/s
   totalTokens: number;

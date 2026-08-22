@@ -16,7 +16,9 @@ import {
   INITIAL_A2UI_CARDS, 
   INITIAL_WORKSPACE_FILES, 
   createInitialSuretyLogs, 
-  computeTokenStats 
+  computeTokenStats,
+  advanceAgentCycle,
+  markAgentBlocked
 } from '../mock/simulationEngine';
 import { computeSha256, computeMerkleRoot } from '../mock/merkle';
 
@@ -192,6 +194,17 @@ class SwarmStore {
     this.setState({ cards: updatedCards });
 
     if (rejectedGate) {
+      // Isolate the offending worker immediately: it stops advancing while
+      // unrelated workers continue. fencingGen is intentionally untouched —
+      // this is scheduling isolation, never a writer-claim authority change.
+      this.setState({
+        agents: markAgentBlocked(
+          this.state.agents,
+          rejectedGate.agentId,
+          `Operator rejected approval gate ${gateId}`
+        )
+      });
+
       this.recordSecurityEvent({
         agentId: rejectedGate.agentId,
         agentName: rejectedGate.agentName,
@@ -345,17 +358,11 @@ class SwarmStore {
     this.timerId = window.setInterval(() => {
       if (!this.state.isStreaming) return;
 
-      // 1. Randomly update agents' token counts and tasks
-      const updatedAgents = this.state.agents.map(a => {
-        const delta = Math.floor(Math.random() * (a.tokenRate * 2.5)) + 10;
-        const ping = Date.now();
-        return {
-          ...a,
-          totalTokens: a.totalTokens + delta,
-          lastPing: ping,
-          memoryUsageMb: Math.max(48, Math.min(2400, a.memoryUsageMb + (Math.floor(Math.random() * 7) - 3)))
-        };
-      });
+      // 1. Advance every eligible worker through the shared cycle helper.
+      //    A blocked worker freezes in place (no token delta, heartbeat, or
+      //    memory drift) while unrelated workers keep advancing — one blocked
+      //    provider can never cause a fleet-wide early return or pause.
+      const { agents: updatedAgents } = advanceAgentCycle(this.state.agents, Date.now());
 
       // 2. Update progress card milestone
       const updatedCards = this.state.cards.map(c => {
