@@ -250,6 +250,7 @@ def dispatch_ready_step(
                 step_id=step.definition.step_id,
                 worker_id=worker_id,
                 capability=step.definition.capability,
+                attempt=step.attempts,
                 revision=run.revision,
                 idempotency_key=key,
             )
@@ -261,6 +262,7 @@ def dispatch_ready_step(
             "run_id": run_id,
             "step_id": step.definition.step_id,
             "worker_id": worker_id,
+            "attempt": step.attempts,
             "idempotency_key": key,
         }
     except (
