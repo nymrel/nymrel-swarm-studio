@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
@@ -34,7 +34,7 @@ def parse_time(value: str) -> datetime:
     parsed = datetime.fromisoformat(normalized)
     if parsed.tzinfo is None:
         raise ValueError("lease expiry must be timezone-aware")
-    return parsed
+    return parsed.astimezone(UTC)
 
 
 def load_plan(path: Path) -> tuple[str, int, list[StepDefinition]]:
@@ -98,6 +98,7 @@ def main() -> int:
     duplicate_suppressed = False
     stale_lease_recovered = False
     docs_crash_simulated = False
+    clock = datetime(2026, 8, 21, 12, 0, tzinfo=UTC)
 
     while True:
         claimed = engine.claim_next(
@@ -105,7 +106,9 @@ def main() -> int:
             worker_id="demo-worker",
             capabilities=capabilities,
             lease_seconds=10,
+            now=clock,
         )
+        clock += timedelta(seconds=1)
         if claimed is None:
             break
         step_id = claimed.definition.step_id
@@ -113,11 +116,13 @@ def main() -> int:
         if step_id == "docs" and not docs_crash_simulated:
             docs_crash_simulated = True
             assert claimed.lease_expires_at is not None
+            recovered_at = parse_time(claimed.lease_expires_at) + timedelta(seconds=1)
             recovered = engine.recover_stale_leases(
                 run_id=run.run_id,
-                now=parse_time(claimed.lease_expires_at) + timedelta(seconds=1),
+                now=recovered_at,
             )
             stale_lease_recovered = recovered == 1
+            clock = recovered_at + timedelta(seconds=1)
             continue
 
         result = execute_step(claimed.definition)
@@ -131,7 +136,9 @@ def main() -> int:
             observed=result.observed,
             result=result.result,
             artifact_digests=result.artifact_digests,
+            now=clock,
         )
+        clock += timedelta(seconds=1)
         if step_id == "tests":
             duplicate = engine.record_result(
                 run_id=run.run_id,
@@ -141,8 +148,10 @@ def main() -> int:
                 expected="duplicate payload is ignored",
                 observed="duplicate payload is ignored",
                 result="error",
+                now=clock,
             )
             duplicate_suppressed = duplicate.receipt_id == receipt.receipt_id
+            clock += timedelta(seconds=1)
 
     current = engine.get_run(run.run_id)
     deploy = current.steps["deploy"]
@@ -153,6 +162,7 @@ def main() -> int:
             action="Deploy Relay to an isolated Google Cloud competition environment",
             reason="The competition requires observable Google Cloud deployment evidence.",
             cost_usd=0,
+            now=clock,
         )
     else:
         raise RuntimeError("demo did not reach the protected deployment gate")
