@@ -80,6 +80,7 @@ def _decode_push(document: Any) -> DispatchEnvelope:
         "step_id",
         "worker_id",
         "capability",
+        "attempt",
         "revision",
         "idempotency_key",
     }
@@ -87,7 +88,10 @@ def _decode_push(document: Any) -> DispatchEnvelope:
         raise ValueError(
             f"dispatch payload keys must equal {sorted(expected_keys)}"
         )
+    attempt = payload["attempt"]
     revision = payload["revision"]
+    if not isinstance(attempt, int) or isinstance(attempt, bool) or attempt < 1:
+        raise ValueError("attempt must be a positive integer")
     if not isinstance(revision, int) or isinstance(revision, bool) or revision < 0:
         raise ValueError("revision must be a non-negative integer")
     values = {
@@ -112,6 +116,7 @@ def _decode_push(document: Any) -> DispatchEnvelope:
         step_id=values["step_id"],
         worker_id=values["worker_id"],
         capability=values["capability"],
+        attempt=attempt,
         revision=revision,
         idempotency_key=values["idempotency_key"],
     )
@@ -157,8 +162,13 @@ async def receive_pubsub(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=409, detail="step is not leased")
     if step.lease_owner != envelope.worker_id:
         raise HTTPException(status_code=403, detail="worker does not own the lease")
+    if step.attempts != envelope.attempt:
+        raise HTTPException(status_code=409, detail="dispatch references a stale lease attempt")
     if step.definition.capability != envelope.capability:
         raise HTTPException(status_code=409, detail="capability does not match lease")
+    expected_key = f"{envelope.run_id}:{envelope.step_id}:{envelope.attempt}"
+    if envelope.idempotency_key != expected_key:
+        raise HTTPException(status_code=409, detail="idempotency key does not match lease")
 
     try:
         result = execute_step(step.definition)
