@@ -40,13 +40,32 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Compile provider-neutral code and tests
-        run: python -m compileall -q relay_core relay_google relay_worker tests
+      - name: Compile provider-neutral code, demo, and tests
+        run: python -m compileall -q relay_core relay_google relay_worker demo tests
 
       - name: Run deterministic core and adapter tests
         env:
           PYTHONPATH: .
         run: python -m unittest discover -s tests -v
+
+      - name: Run crash, duplicate-delivery, and approval demo
+        env:
+          PYTHONPATH: .
+        run: |
+          python demo/run_demo.py > relay-demo.json
+          python - <<'PY'
+          import json
+
+          with open("relay-demo.json", encoding="utf-8") as handle:
+              demo = json.load(handle)
+          assert demo["duplicate_suppressed"] is True
+          assert demo["stale_lease_recovered"] is True
+          assert demo["human_approval_required"] is True
+          assert demo["run"]["status"] == "awaiting_approval"
+          assert demo["run"]["steps"]["deploy"]["status"] == "awaiting_approval"
+          assert len(demo["run"]["receipts"]) == 4
+          print("Relay offline demo: PASS")
+          PY
 
   google-contract:
     name: Google ADK and Cloud Run package contract
