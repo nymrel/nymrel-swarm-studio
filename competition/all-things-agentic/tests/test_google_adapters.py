@@ -40,6 +40,7 @@ class GoogleAdapterTests(unittest.TestCase):
                 schema="nymrel.relay.dispatch.v1",
                 run_id="run_123",
                 step_id="validate",
+                worker_id="validator-1",
                 capability="validation",
                 revision=4,
                 idempotency_key="run_123:validate:1",
@@ -50,6 +51,7 @@ class GoogleAdapterTests(unittest.TestCase):
         self.assertEqual(topic, "projects/relay-demo/topics/relay-work")
         document = json.loads(payload)
         self.assertEqual(document["run_id"], "run_123")
+        self.assertEqual(document["worker_id"], "validator-1")
         self.assertEqual(attributes["capability"], "validation")
         self.assertNotIn("goal", document)
         self.assertNotIn("secret", payload.decode("utf-8").lower())
@@ -73,6 +75,7 @@ class GoogleAdapterTests(unittest.TestCase):
                     schema="unsupported",
                     run_id="run_123",
                     step_id="validate",
+                    worker_id="validator-1",
                     capability="validation",
                     revision=0,
                     idempotency_key="key",
