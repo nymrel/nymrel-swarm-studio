@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from .models import (
+    JSONValue,
     ApprovalDecision,
     ApprovalRequest,
     EvidenceReceipt,
@@ -27,10 +28,12 @@ def run_from_document(document: dict[str, Any]) -> RunState:
         if not isinstance(value, dict):
             raise ValueError(f"steps.{step_id} must be an object")
         definition_doc = _dict(value, "definition")
+        input_data = _dict(definition_doc, "input_data", default={})
         definition = StepDefinition(
             step_id=_str(definition_doc, "step_id"),
             capability=_str(definition_doc, "capability"),
             description=_str(definition_doc, "description"),
+            input_data=cast(dict[str, JSONValue], input_data),
             depends_on=_string_list(definition_doc.get("depends_on", []), "depends_on"),
             protected_action=_bool(definition_doc, "protected_action", False),
             max_attempts=_int(definition_doc, "max_attempts", 3),
