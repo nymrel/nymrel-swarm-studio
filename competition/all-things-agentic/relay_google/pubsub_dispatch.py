@@ -21,6 +21,7 @@ class DispatchEnvelope:
     step_id: str
     worker_id: str
     capability: str
+    attempt: int
     revision: int
     idempotency_key: str
 
@@ -51,6 +52,8 @@ class PubSubDispatcher:
     def publish(self, envelope: DispatchEnvelope, timeout: float = 30) -> str:
         if envelope.schema != "nymrel.relay.dispatch.v1":
             raise ValueError("unsupported dispatch envelope schema")
+        if envelope.attempt < 1:
+            raise ValueError("attempt must be a positive integer")
         if envelope.revision < 0:
             raise ValueError("revision must be non-negative")
         for label, value in (
