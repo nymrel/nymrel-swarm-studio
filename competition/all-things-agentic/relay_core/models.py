@@ -47,6 +47,7 @@ class StepDefinition:
     step_id: str
     capability: str
     description: str
+    input_data: dict[str, JSONValue] = field(default_factory=dict)
     depends_on: list[str] = field(default_factory=list)
     protected_action: bool = False
     max_attempts: int = 3
