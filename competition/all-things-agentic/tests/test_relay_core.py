@@ -15,6 +15,8 @@ from relay_core import (
     run_to_document,
 )
 
+VALID_DIGEST = "sha256:" + "a" * 64
+
 
 class RelayCoreTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -62,7 +64,7 @@ class RelayCoreTests(unittest.TestCase):
             expected="artifact is valid",
             observed="all deterministic checks passed",
             result="pass",
-            artifact_digests=["sha256:abc"],
+            artifact_digests=[VALID_DIGEST],
         )
         self.assertEqual(receipt.result, "pass")
 
