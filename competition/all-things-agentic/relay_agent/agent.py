@@ -5,14 +5,20 @@ from __future__ import annotations
 import json
 import os
 import threading
-from typing import Any
+from typing import Any, cast
 
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
 from google.genai import types
 
-from relay_core import InMemoryRunStore, RelayEngine, StepDefinition, to_json_dict
+from relay_core import (
+    JSONValue,
+    InMemoryRunStore,
+    RelayEngine,
+    StepDefinition,
+    to_json_dict,
+)
 from relay_google import DispatchEnvelope, FirestoreRunStore, PubSubDispatcher
 
 MODEL = os.getenv("RELAY_MODEL", "gemini-3.5-flash")
@@ -41,7 +47,9 @@ def _store() -> Any:
         if mode == "firestore":
             _STORE = FirestoreRunStore(
                 project=os.getenv("GOOGLE_CLOUD_PROJECT"),
-                collection=os.getenv("RELAY_FIRESTORE_COLLECTION", "nymrel_relay_runs"),
+                collection=os.getenv(
+                    "RELAY_FIRESTORE_COLLECTION", "nymrel_relay_runs"
+                ),
             )
         elif mode == "memory":
             _STORE = InMemoryRunStore()
@@ -68,10 +76,11 @@ def _allowed_capabilities() -> set[str]:
 def create_relay_run(goal: str, steps_json: str, max_parallel: int = 3) -> dict[str, Any]:
     """Create a bounded durable run from a JSON array of step specifications.
 
-    Each step may contain step_id, capability, description, depends_on,
-    protected_action, and max_attempts. Capabilities must be allowlisted.
-    Protected steps cannot execute until a human approval is recorded outside
-    the ADK agent.
+    Each step may contain step_id, capability, description, input_data,
+    depends_on, protected_action, and max_attempts. Capabilities must be
+    allowlisted. input_data is stored in Firestore only and rejects secret-like
+    keys. Protected steps cannot execute until a human approval is recorded
+    outside the ADK agent.
     """
 
     try:
@@ -87,36 +96,56 @@ def create_relay_run(goal: str, steps_json: str, max_parallel: int = 3) -> dict[
                 "step_id",
                 "capability",
                 "description",
+                "input_data",
                 "depends_on",
                 "protected_action",
                 "max_attempts",
             }
             unknown = set(item) - supported
             if unknown:
-                raise ValueError(f"step {index} has unsupported keys: {sorted(unknown)}")
+                raise ValueError(
+                    f"step {index} has unsupported keys: {sorted(unknown)}"
+                )
             step_id = item.get("step_id")
             capability = item.get("capability")
             description = item.get("description")
-            if not all(isinstance(value, str) for value in (step_id, capability, description)):
-                raise ValueError(f"step {index} id, capability, and description must be strings")
+            if not all(
+                isinstance(value, str)
+                for value in (step_id, capability, description)
+            ):
+                raise ValueError(
+                    f"step {index} id, capability, and description must be strings"
+                )
             if capability not in allowed:
-                raise ValueError(f"step {index} capability is not allowlisted: {capability}")
+                raise ValueError(
+                    f"step {index} capability is not allowlisted: {capability}"
+                )
+            input_data = item.get("input_data", {})
+            if not isinstance(input_data, dict):
+                raise ValueError(f"step {index} input_data must be an object")
             depends_on = item.get("depends_on", [])
             if not isinstance(depends_on, list) or not all(
                 isinstance(value, str) for value in depends_on
             ):
-                raise ValueError(f"step {index} depends_on must be a string array")
+                raise ValueError(
+                    f"step {index} depends_on must be a string array"
+                )
             protected = item.get("protected_action", False)
             if not isinstance(protected, bool):
-                raise ValueError(f"step {index} protected_action must be boolean")
+                raise ValueError(
+                    f"step {index} protected_action must be boolean"
+                )
             max_attempts = item.get("max_attempts", 3)
             if not isinstance(max_attempts, int) or isinstance(max_attempts, bool):
-                raise ValueError(f"step {index} max_attempts must be an integer")
+                raise ValueError(
+                    f"step {index} max_attempts must be an integer"
+                )
             definitions.append(
                 StepDefinition(
-                    step_id=step_id,
-                    capability=capability,
-                    description=description,
+                    step_id=cast(str, step_id),
+                    capability=cast(str, capability),
+                    description=cast(str, description),
+                    input_data=cast(dict[str, JSONValue], input_data),
                     depends_on=list(depends_on),
                     protected_action=protected,
                     max_attempts=max_attempts,
@@ -129,7 +158,11 @@ def create_relay_run(goal: str, steps_json: str, max_parallel: int = 3) -> dict[
         )
         return {"success": True, "run": to_json_dict(run)}
     except (KeyError, TypeError, ValueError) as exc:
-        return {"success": False, "reason_code": "invalid_run_plan", "message": str(exc)}
+        return {
+            "success": False,
+            "reason_code": "invalid_run_plan",
+            "message": str(exc),
+        }
 
 
 def get_relay_run(run_id: str) -> dict[str, Any]:
@@ -169,7 +202,11 @@ def request_human_approval(
             "human_decision_required": True,
         }
     except (KeyError, TypeError, ValueError) as exc:
-        return {"success": False, "reason_code": "approval_request_rejected", "message": str(exc)}
+        return {
+            "success": False,
+            "reason_code": "approval_request_rejected",
+            "message": str(exc),
+        }
 
 
 def dispatch_ready_step(
@@ -179,16 +216,18 @@ def dispatch_ready_step(
 ) -> dict[str, Any]:
     """Lease one ready step and dispatch its identifier through Google Pub/Sub.
 
-    The message excludes the goal, prompts, credentials, and approval notes.
-    Workers retrieve authorized state from Firestore. If dispatch fails, the
-    lease expires and can be recovered; the agent never claims execution.
+    The message excludes the goal, input data, prompts, credentials, and approval
+    notes. Workers retrieve authorized state from Firestore. If dispatch fails,
+    the lease expires and can be recovered; the agent never claims execution.
     """
 
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "").strip()
     topic = os.getenv("RELAY_PUBSUB_TOPIC", "").strip()
     if not project_id or not topic:
         return {"success": False, "reason_code": "pubsub_not_configured"}
-    capabilities = {item.strip() for item in capabilities_csv.split(",") if item.strip()}
+    capabilities = {
+        item.strip() for item in capabilities_csv.split(",") if item.strip()
+    }
     try:
         engine = _engine()
         step = engine.claim_next(
@@ -197,7 +236,11 @@ def dispatch_ready_step(
             capabilities=capabilities,
         )
         if step is None:
-            return {"success": True, "dispatched": False, "reason_code": "no_ready_step"}
+            return {
+                "success": True,
+                "dispatched": False,
+                "reason_code": "no_ready_step",
+            }
         run = engine.get_run(run_id)
         key = f"{run_id}:{step.definition.step_id}:{step.attempts}"
         message_id = PubSubDispatcher(project_id=project_id, topic=topic).publish(
@@ -220,8 +263,18 @@ def dispatch_ready_step(
             "worker_id": worker_id,
             "idempotency_key": key,
         }
-    except (KeyError, PermissionError, RuntimeError, TypeError, ValueError) as exc:
-        return {"success": False, "reason_code": "dispatch_failed", "message": str(exc)}
+    except (
+        KeyError,
+        PermissionError,
+        RuntimeError,
+        TypeError,
+        ValueError,
+    ) as exc:
+        return {
+            "success": False,
+            "reason_code": "dispatch_failed",
+            "message": str(exc),
+        }
 
 
 def recover_stale_relay_leases(run_id: str) -> dict[str, Any]:
@@ -231,7 +284,11 @@ def recover_stale_relay_leases(run_id: str) -> dict[str, Any]:
         recovered = _engine().recover_stale_leases(run_id=run_id)
         return {"success": True, "recovered": recovered}
     except (KeyError, ValueError) as exc:
-        return {"success": False, "reason_code": "recovery_failed", "message": str(exc)}
+        return {
+            "success": False,
+            "reason_code": "recovery_failed",
+            "message": str(exc),
+        }
 
 
 root_agent = Agent(
@@ -250,6 +307,7 @@ acyclic plan and use the available tools to create and monitor it.
 
 Rules:
 - Use only allowlisted capabilities and at most 12 steps.
+- Put only public-safe, non-secret structured input in input_data.
 - Mark deployment, publication, spending, account changes, merges, legal terms,
   payments, transactions, and other external writes as protected_action=true.
 - You may request a human approval; you can never approve or deny it yourself.
