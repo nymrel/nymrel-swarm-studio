@@ -15,18 +15,34 @@ from typing import Any, Literal
 JSONValue = str | int | float | bool | None | list["JSONValue"] | dict[str, "JSONValue"]
 _MAX_INPUT_BYTES = 8192
 _FORBIDDEN_INPUT_KEYS = {
-    "api_key",
     "apikey",
     "authorization",
-    "card_number",
+    "cardnumber",
     "cookie",
     "credential",
     "cvv",
     "password",
-    "private_key",
+    "privatekey",
     "secret",
     "token",
 }
+_FORBIDDEN_KEY_SUFFIXES = (
+    "apikey",
+    "credential",
+    "password",
+    "privatekey",
+    "secret",
+    "token",
+)
+_FORBIDDEN_VALUE_MARKERS = (
+    "-----BEGIN PRIVATE KEY-----",
+    "-----BEGIN OPENSSH PRIVATE KEY-----",
+    "github_pat_",
+    "ghp_",
+    "sk-proj-",
+    "xoxb-",
+    "xoxp-",
+)
 
 
 def utc_now() -> str:
@@ -50,16 +66,22 @@ def _validate_input_data(value: dict[str, JSONValue]) -> None:
     def inspect(item: JSONValue, path: str) -> None:
         if isinstance(item, dict):
             for key, nested in item.items():
-                normalized = key.strip().lower().replace("-", "_")
-                if normalized in _FORBIDDEN_INPUT_KEYS or any(
-                    normalized.endswith(f"_{suffix}")
-                    for suffix in ("password", "secret", "token", "private_key")
+                compact = "".join(character for character in key.casefold() if character.isalnum())
+                if compact in _FORBIDDEN_INPUT_KEYS or compact.endswith(
+                    _FORBIDDEN_KEY_SUFFIXES
                 ):
-                    raise ValueError(f"step input_data contains forbidden key at {path}.{key}")
+                    raise ValueError(
+                        f"step input_data contains forbidden key at {path}.{key}"
+                    )
                 inspect(nested, f"{path}.{key}")
         elif isinstance(item, list):
             for index, nested in enumerate(item):
                 inspect(nested, f"{path}[{index}]")
+        elif isinstance(item, str):
+            if any(marker in item for marker in _FORBIDDEN_VALUE_MARKERS):
+                raise ValueError(
+                    f"step input_data contains a forbidden secret-like value at {path}"
+                )
 
     inspect(value, "input_data")
 
