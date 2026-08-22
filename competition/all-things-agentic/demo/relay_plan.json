@@ -1,0 +1,65 @@
+{
+  "goal": "Prepare a public-safe competition service for independent review without merging or deploying automatically.",
+  "max_parallel": 2,
+  "steps": [
+    {
+      "step_id": "sources",
+      "capability": "public_research",
+      "description": "Validate official public source references.",
+      "input_data": {
+        "sources": [
+          "https://allthingsagentichackathon.devpost.com/",
+          "https://allthingsagentichackathon.devpost.com/rules",
+          "https://google.github.io/agents-cli/"
+        ]
+      }
+    },
+    {
+      "step_id": "tests",
+      "capability": "validation",
+      "description": "Evaluate deterministic test evidence.",
+      "input_data": {
+        "checks": [
+          { "name": "unit-tests", "passed": true },
+          { "name": "duplicate-delivery", "passed": true },
+          { "name": "stale-lease-recovery", "passed": true }
+        ],
+        "artifact_digests": [
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      }
+    },
+    {
+      "step_id": "docs",
+      "capability": "documentation",
+      "description": "Check submission documentation completeness.",
+      "depends_on": ["sources", "tests"],
+      "input_data": {
+        "required_sections": ["Setup", "Architecture", "Security", "Limitations"],
+        "present_sections": ["Setup", "Architecture", "Security", "Limitations"]
+      }
+    },
+    {
+      "step_id": "review",
+      "capability": "review",
+      "description": "Evaluate the bounded independent review findings.",
+      "depends_on": ["docs"],
+      "input_data": {
+        "findings": [
+          { "severity": "low" }
+        ]
+      }
+    },
+    {
+      "step_id": "deploy",
+      "capability": "deployment",
+      "description": "Deploy the approved build to an isolated Google Cloud environment.",
+      "depends_on": ["review"],
+      "protected_action": true,
+      "input_data": {
+        "environment": "competition-development",
+        "max_cost_usd": 0
+      }
+    }
+  ]
+}
