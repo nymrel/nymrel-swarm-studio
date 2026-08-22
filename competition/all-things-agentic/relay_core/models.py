@@ -6,16 +6,62 @@ and evidence behavior can be tested without credentials or network access.
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Literal
 
 JSONValue = str | int | float | bool | None | list["JSONValue"] | dict[str, "JSONValue"]
+_MAX_INPUT_BYTES = 8192
+_FORBIDDEN_INPUT_KEYS = {
+    "api_key",
+    "apikey",
+    "authorization",
+    "card_number",
+    "cookie",
+    "credential",
+    "cvv",
+    "password",
+    "private_key",
+    "secret",
+    "token",
+}
 
 
 def utc_now() -> str:
     return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+
+
+def _validate_input_data(value: dict[str, JSONValue]) -> None:
+    try:
+        encoded = json.dumps(
+            value,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+            allow_nan=False,
+        ).encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("step input_data must be strict JSON") from exc
+    if len(encoded) > _MAX_INPUT_BYTES:
+        raise ValueError(f"step input_data exceeds {_MAX_INPUT_BYTES} bytes")
+
+    def inspect(item: JSONValue, path: str) -> None:
+        if isinstance(item, dict):
+            for key, nested in item.items():
+                normalized = key.strip().lower().replace("-", "_")
+                if normalized in _FORBIDDEN_INPUT_KEYS or any(
+                    normalized.endswith(f"_{suffix}")
+                    for suffix in ("password", "secret", "token", "private_key")
+                ):
+                    raise ValueError(f"step input_data contains forbidden key at {path}.{key}")
+                inspect(nested, f"{path}.{key}")
+        elif isinstance(item, list):
+            for index, nested in enumerate(item):
+                inspect(nested, f"{path}[{index}]")
+
+    inspect(value, "input_data")
 
 
 class RunStatus(StrEnum):
@@ -51,6 +97,11 @@ class StepDefinition:
     depends_on: list[str] = field(default_factory=list)
     protected_action: bool = False
     max_attempts: int = 3
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.input_data, dict):
+            raise ValueError("step input_data must be a JSON object")
+        _validate_input_data(self.input_data)
 
 
 @dataclass(slots=True)
