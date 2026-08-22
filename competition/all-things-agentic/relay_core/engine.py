@@ -30,7 +30,16 @@ def _parse_time(value: str) -> datetime:
     return parsed.astimezone(UTC)
 
 
+def _aware_now(value: datetime | None) -> datetime:
+    current = value or datetime.now(UTC)
+    if current.tzinfo is None:
+        raise ValueError("now must be timezone-aware")
+    return current.astimezone(UTC)
+
+
 def _format_time(value: datetime) -> str:
+    if value.tzinfo is None:
+        raise ValueError("timestamps must be timezone-aware")
     return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
@@ -82,6 +91,7 @@ class RelayEngine:
             created_at=now,
             updated_at=now,
             max_parallel=max_parallel,
+            revision=0,
             steps={step.step_id: StepState(definition=step) for step in definitions},
         )
         self.store.create(run)
@@ -122,7 +132,7 @@ class RelayEngine:
             if existing.decision is ApprovalDecision.PENDING:
                 return copy.deepcopy(existing)
 
-        current = now or datetime.now(UTC)
+        current = _aware_now(now)
         approval = ApprovalRequest(
             approval_id=f"approval_{uuid.uuid4().hex}",
             run_id=run_id,
@@ -156,8 +166,8 @@ class RelayEngine:
             raise KeyError(f"unknown approval: {approval_id}")
         if approval.decision is not ApprovalDecision.PENDING:
             raise ValueError("approval has already been resolved")
-        current = now or datetime.now(UTC)
-        if _parse_time(approval.expires_at) <= current.astimezone(UTC):
+        current = _aware_now(now)
+        if _parse_time(approval.expires_at) <= current:
             raise ValueError("approval has expired")
         normalized_note = note.strip()
         if not normalized_note:
@@ -196,7 +206,7 @@ class RelayEngine:
         if not 10 <= lease_seconds <= 3600:
             raise ValueError("lease_seconds must be between 10 and 3600")
 
-        current = now or datetime.now(UTC)
+        current = _aware_now(now)
         run = self.get_run(run_id)
         self._recover_stale_in_place(run, current)
         leased = sum(step.status is StepStatus.LEASED for step in run.steps.values())
@@ -265,7 +275,7 @@ class RelayEngine:
             raise ValueError(f"step is not leased: {step.status}")
         if step.lease_owner != worker_id:
             raise PermissionError("worker does not own the step lease")
-        current = now or datetime.now(UTC)
+        current = _aware_now(now)
         if not step.lease_expires_at or _parse_time(step.lease_expires_at) <= current:
             raise ValueError("step lease has expired")
 
@@ -305,7 +315,7 @@ class RelayEngine:
     def recover_stale_leases(
         self, *, run_id: str, now: datetime | None = None
     ) -> int:
-        current = now or datetime.now(UTC)
+        current = _aware_now(now)
         run = self.get_run(run_id)
         recovered = self._recover_stale_in_place(run, current)
         run.updated_at = _format_time(current)
@@ -318,7 +328,7 @@ class RelayEngine:
         for step in run.steps.values():
             if step.status is not StepStatus.LEASED or not step.lease_expires_at:
                 continue
-            if _parse_time(step.lease_expires_at) > now.astimezone(UTC):
+            if _parse_time(step.lease_expires_at) > now:
                 continue
             recovered += 1
             step.lease_owner = None
