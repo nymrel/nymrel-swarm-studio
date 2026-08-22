@@ -22,7 +22,7 @@ class RelayInputPolicyTests(unittest.TestCase):
                     {"name": "unit", "passed": True},
                     {"name": "schema", "passed": True},
                 ],
-                "artifact_digests": ["sha256:abc"],
+                "artifact_digests": ["sha256:" + "a" * 64],
             },
         )
         engine = RelayEngine(InMemoryRunStore())
@@ -37,8 +37,11 @@ class RelayInputPolicyTests(unittest.TestCase):
         for value in (
             {"api_key": "not-allowed"},
             {"nested": {"access_token": "not-allowed"}},
+            {"nested": {"accessToken": "not-allowed"}},
+            {"nested": {"clientSecret": "not-allowed"}},
             {"headers": {"authorization": "Bearer not-allowed"}},
             {"payment": {"card_number": "not-allowed"}},
+            {"payment": {"cardNumber": "not-allowed"}},
         ):
             with self.subTest(value=value):
                 with self.assertRaisesRegex(ValueError, "forbidden key"):
@@ -47,6 +50,23 @@ class RelayInputPolicyTests(unittest.TestCase):
                         capability="validation",
                         description="Reject secret input.",
                         input_data=value,
+                    )
+
+    def test_secret_like_values_fail_closed_even_under_neutral_keys(self) -> None:
+        for marker in (
+            "-----BEGIN PRIVATE KEY-----",
+            "github_pat_example",
+            "ghp_example",
+            "sk-proj-example",
+            "xoxb-example",
+        ):
+            with self.subTest(marker=marker):
+                with self.assertRaisesRegex(ValueError, "secret-like value"):
+                    StepDefinition(
+                        step_id="blocked",
+                        capability="validation",
+                        description="Reject secret input.",
+                        input_data={"value": marker},
                     )
 
     def test_oversize_and_nonstandard_numbers_fail_closed(self) -> None:
