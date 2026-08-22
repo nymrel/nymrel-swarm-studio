@@ -11,7 +11,7 @@ from .models import (
     StepStatus,
     to_json_dict,
 )
-from .receipts import canonical_json, create_receipt, digest_json
+from .receipts import canonical_json, create_receipt, digest_json, verify_receipt
 from .serde import run_from_document, run_to_document
 from .store import ConcurrentMutationError, InMemoryRunStore, RunStore
 
@@ -35,4 +35,5 @@ __all__ = [
     "run_from_document",
     "run_to_document",
     "to_json_dict",
+    "verify_receipt",
 ]
