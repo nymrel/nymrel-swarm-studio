@@ -42,6 +42,7 @@ class GoogleAdapterTests(unittest.TestCase):
                 step_id="validate",
                 worker_id="validator-1",
                 capability="validation",
+                attempt=1,
                 revision=4,
                 idempotency_key="run_123:validate:1",
             )
@@ -52,12 +53,13 @@ class GoogleAdapterTests(unittest.TestCase):
         document = json.loads(payload)
         self.assertEqual(document["run_id"], "run_123")
         self.assertEqual(document["worker_id"], "validator-1")
+        self.assertEqual(document["attempt"], 1)
         self.assertEqual(attributes["capability"], "validation")
         self.assertNotIn("goal", document)
         self.assertNotIn("secret", payload.decode("utf-8").lower())
         self.assertLess(len(payload), 16_384)
 
-    def test_invalid_topic_and_schema_fail_closed(self) -> None:
+    def test_invalid_topic_schema_and_attempt_fail_closed(self) -> None:
         with self.assertRaisesRegex(ValueError, "topic"):
             PubSubDispatcher(
                 project_id="relay-demo",
@@ -77,6 +79,20 @@ class GoogleAdapterTests(unittest.TestCase):
                     step_id="validate",
                     worker_id="validator-1",
                     capability="validation",
+                    attempt=1,
+                    revision=0,
+                    idempotency_key="key",
+                )
+            )
+        with self.assertRaisesRegex(ValueError, "attempt"):
+            dispatcher.publish(
+                DispatchEnvelope(
+                    schema="nymrel.relay.dispatch.v1",
+                    run_id="run_123",
+                    step_id="validate",
+                    worker_id="validator-1",
+                    capability="validation",
+                    attempt=0,
                     revision=0,
                     idempotency_key="key",
                 )
