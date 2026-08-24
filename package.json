@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "node --test test/**/*.test.js",
+    "test": "node --test",
     "start": "vite preview",
     "prepublishOnly": "npm run build && npm test"
   },
