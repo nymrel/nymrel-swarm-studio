@@ -30,7 +30,23 @@ jobs:
       - name: Checkout the requested ref
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify the release commit is integrated into main
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* && ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected an exact vMAJOR.MINOR.PATCH tag; got $GITHUB_REF_NAME" >&2
+            exit 1
+          fi
+
+          release_commit="$(git rev-parse "${GITHUB_SHA}^{commit}")"
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$release_commit" refs/remotes/origin/main; then
+            echo "Release commit $release_commit is not integrated into origin/main." >&2
+            exit 1
+          fi
 
       - name: Set up Node.js 24
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -81,11 +97,30 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout the tagged ref with full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
       - name: Validate the semantic version tag
         shell: bash
         run: |
           if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Expected an exact vMAJOR.MINOR.PATCH tag; got $GITHUB_REF_NAME" >&2
+            exit 1
+          fi
+
+          tag_commit="$(git rev-parse "refs/tags/${GITHUB_REF_NAME}^{commit}")"
+          event_commit="$(git rev-parse "${GITHUB_SHA}^{commit}")"
+          if [[ "$tag_commit" != "$event_commit" ]]; then
+            echo "Tag $GITHUB_REF_NAME moved from event commit $event_commit to $tag_commit." >&2
+            exit 1
+          fi
+
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$tag_commit" refs/remotes/origin/main; then
+            echo "Tagged commit $tag_commit is no longer integrated into origin/main." >&2
             exit 1
           fi
 

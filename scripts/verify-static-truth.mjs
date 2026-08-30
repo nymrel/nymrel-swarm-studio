@@ -29,6 +29,11 @@ function rejectText(file, content, forbidden) {
   }
 }
 
+function requireOccurrences(file, content, expected, minimum) {
+  const count = content.split(expected).length - 1;
+  if (count < minimum) failures.push(`${file}: expected at least ${minimum} occurrences of ${JSON.stringify(expected)}, found ${count}`);
+}
+
 const packageJson = JSON.parse(await read('package.json'));
 if (packageJson.private !== true) failures.push('package.json: application must remain private');
 if (!String(packageJson.engines?.node ?? '').includes('>=22.12')) failures.push('package.json: Node 22.12+ floor is required');
@@ -102,6 +107,13 @@ for (const file of workflowFiles) {
     if (/\bnpm ci\b/.test(line) && !line.includes('--ignore-scripts')) failures.push(`${file}: npm ci must disable lifecycle scripts`);
   }
 }
+
+const releaseWorkflow = await read('.github/workflows/release.yml');
+requireOccurrences('.github/workflows/release.yml', releaseWorkflow, 'fetch-depth: 0', 2);
+requireOccurrences('.github/workflows/release.yml', releaseWorkflow, 'git merge-base --is-ancestor', 2);
+requireOccurrences('.github/workflows/release.yml', releaseWorkflow, 'refs/remotes/origin/main', 4);
+requireText('.github/workflows/release.yml', releaseWorkflow, 'tag_commit');
+requireText('.github/workflows/release.yml', releaseWorkflow, 'event_commit');
 
 if (failures.length > 0) {
   console.error('Static truth validation failed:\n' + failures.map(item => `- ${item}`).join('\n'));
