@@ -1,0 +1,101 @@
+name: Release static artifact
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Verify and package exact static bytes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
+    env:
+      NPM_CONFIG_AUDIT: 'false'
+      NPM_CONFIG_FUND: 'false'
+      NPM_CONFIG_IGNORE_SCRIPTS: 'true'
+
+    steps:
+      - name: Checkout the requested ref
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Pin npm
+        run: npm install --global npm@11.19.1 --ignore-scripts --no-audit --no-fund
+
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Run the complete acceptance gate
+        run: npm run check
+
+      - name: Audit high-severity dependency advisories
+        run: npm run audit:ci
+
+      - name: Create deterministic archive and checksum
+        shell: bash
+        run: |
+          mkdir -p release
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -cf - -C dist . \
+            | gzip -n -9 > release/nymrel-swarm-studio.tar.gz
+          sha256sum release/nymrel-swarm-studio.tar.gz > release/nymrel-swarm-studio.tar.gz.sha256
+
+      - name: Attest the packaged artifact
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/nymrel-swarm-studio.tar.gz
+
+      - name: Upload packaged bytes
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: swarm-studio-release
+          path: release/
+          if-no-files-found: error
+          retention-days: 14
+
+  github-release:
+    name: Publish a tagged GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate the semantic version tag
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected an exact vMAJOR.MINOR.PATCH tag; got $GITHUB_REF_NAME" >&2
+            exit 1
+          fi
+
+      - name: Download accepted bytes
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: swarm-studio-release
+          path: release
+
+      - name: Create the release from an existing version tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes

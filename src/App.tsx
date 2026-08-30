@@ -1,9 +1,10 @@
 import React from 'react';
-import { useSwarmStore, ActiveTab } from './state/swarmStore';
+import { useSwarmStore } from './state/swarmStore';
+import type { ActiveTab } from './state/swarmStore';
 import { Header } from './components/Header';
 import { SwarmRoster } from './components/SwarmRoster';
-import { A2UICanvas } from './components/A2UICanvas';
-import { ActionSuretyLog } from './components/ActionSuretyLog';
+import { ScenarioCanvas } from './components/ScenarioCanvas';
+import { ScenarioIntegrityLog } from './components/ScenarioIntegrityLog';
 import { TokenEfficiencyRadar } from './components/TokenEfficiencyRadar';
 import { WorkspaceInspector } from './components/WorkspaceInspector';
 import { TopologyView } from './components/TopologyView';
@@ -12,23 +13,32 @@ import {
   Network, 
   FolderGit2, 
   ShieldCheck, 
-  CheckCircle2
+  CheckCircle2,
+  Info,
 } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [state, store] = useSwarmStore();
 
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'deck', label: 'Command Deck', icon: <LayoutDashboard size={15} /> },
-    { id: 'topology', label: 'Agent Topology', icon: <Network size={15} /> },
-    { id: 'workspace', label: 'Workspace Inspector', icon: <FolderGit2 size={15} /> },
-    { id: 'security', label: 'Surety Security Ledger', icon: <ShieldCheck size={15} /> }
+    { id: 'deck', label: 'Scenario Deck', icon: <LayoutDashboard size={15} aria-hidden="true" /> },
+    { id: 'topology', label: 'Example Topology', icon: <Network size={15} aria-hidden="true" /> },
+    { id: 'workspace', label: 'Workspace Fixture', icon: <FolderGit2 size={15} aria-hidden="true" /> },
+    { id: 'security', label: 'Integrity Log', icon: <ShieldCheck size={15} aria-hidden="true" /> },
   ];
 
   return (
     <div className="app-container">
       {/* Visual Command Deck Header */}
       <Header />
+
+      <aside className="trust-banner" aria-label="Data and capability boundary">
+        <Info size={17} aria-hidden="true" />
+        <div>
+          <strong>Synthetic fixture · browser-only</strong>
+          <span>No agents, repositories, providers, telemetry, files, commands, sandboxes, or deployments are connected. Every interaction changes only in-memory example state.</span>
+        </div>
+      </aside>
 
       {/* Main Workspace Area */}
       <main className="main-content">
@@ -39,6 +49,7 @@ export const App: React.FC = () => {
               key={tab.id}
               className={`nav-tab-btn ${state.activeTab === tab.id ? 'active' : ''}`}
               onClick={() => store.setActiveTab(tab.id)}
+              aria-current={state.activeTab === tab.id ? 'page' : undefined}
             >
               {tab.icon}
               <span>{tab.label}</span>
@@ -55,10 +66,10 @@ export const App: React.FC = () => {
               <TokenEfficiencyRadar />
             </div>
 
-            {/* Main Grid: A2UI Streaming Canvas + Action Surety Interceptor Log */}
+            {/* Main Grid: scenario canvas + local integrity log */}
             <div className="deck-grid-main">
-              <A2UICanvas />
-              <ActionSuretyLog />
+              <ScenarioCanvas />
+              <ScenarioIntegrityLog />
             </div>
 
             {/* Bottom Row: Workspace Inspector */}
@@ -82,15 +93,15 @@ export const App: React.FC = () => {
             <WorkspaceInspector />
             <div className="deck-grid-top">
               <TokenEfficiencyRadar />
-              <ActionSuretyLog />
+              <ScenarioIntegrityLog />
             </div>
           </div>
         )}
 
-        {/* View 4: Surety Security Ledger */}
+        {/* View 4: local scenario-integrity records */}
         {state.activeTab === 'security' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <ActionSuretyLog />
+            <ScenarioIntegrityLog />
             <div className="deck-grid-top">
               <SwarmRoster />
               <TokenEfficiencyRadar />
@@ -101,8 +112,8 @@ export const App: React.FC = () => {
 
       {/* Toast Notification Banner */}
       {state.toastMessage && (
-        <div className="toast-banner">
-          <CheckCircle2 size={16} color="#FAF8F2" />
+        <div className="toast-banner" role="status" aria-live="polite">
+          <CheckCircle2 size={16} color="#FAF8F2" aria-hidden="true" />
           <span>{state.toastMessage}</span>
         </div>
       )}
@@ -118,10 +129,10 @@ export const App: React.FC = () => {
       }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <strong>Nymrel Swarm Studio</strong> • Built under <a href="https://nymrel.com" target="_blank" rel="noreferrer" style={{ color: 'var(--color-brand-terracotta)', textDecoration: 'none' }}>JalenBuilds LLC</a>
+            <strong>Nymrel Swarm Studio</strong> · A <a href="https://nymrel.com" target="_blank" rel="noreferrer" style={{ color: 'var(--color-brand-terracotta)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>Nymrel</a> reference interface
           </div>
           <div>
-            Dual-Audience Machine Trust & A2UI v0.8 Protocol • MIT Licensed • 2026
+            Synthetic fixtures · no external side effects · MIT licensed · 2026
           </div>
         </div>
       </footer>

@@ -1,8 +1,8 @@
-export type AgentProvider = 'openai' | 'anthropic' | 'google' | 'ollama' | 'cloudflare';
+export type AgentProvider = 'hosted' | 'local' | 'edge';
 
 export type AgentStatus = 'active' | 'thinking' | 'waiting_approval' | 'idle' | 'sandboxed' | 'blocked';
 
-export type HardwareTier = 'Local RTX 4090' | 'Edge Workers AI' | 'Frontier Cloud';
+export type HardwareTier = 'Local accelerator' | 'Edge inference' | 'Hosted model';
 
 export interface Agent {
   id: string;
@@ -24,7 +24,7 @@ export interface Agent {
   avatarColor: string;
 }
 
-export type A2UICardType = 
+export type ScenarioCardType =
   | 'decision-ballot' 
   | 'parameter-slider' 
   | 'approval-gate' 
@@ -122,14 +122,14 @@ export interface ProgressTrackerCard {
   etaSeconds: number;
 }
 
-export type A2UICard = 
+export type ScenarioCard =
   | DecisionBallotCard 
   | ParameterSliderCard 
   | ApprovalGateCard 
   | DiffViewerCard 
   | ProgressTrackerCard;
 
-export type SuretyActionType = 
+export type ScenarioActionType =
   | 'file_write' 
   | 'shell_exec' 
   | 'network_egress' 
@@ -138,29 +138,29 @@ export type SuretyActionType =
   | 'ast_patch' 
   | 'sandbox_escape_attempt';
 
-export type SuretyDecision = 'ALLOW' | 'BLOCK' | 'SANDBOX' | 'INTERCEPT';
+export type ScenarioDecision = 'ALLOW' | 'BLOCK' | 'SANDBOX' | 'INTERCEPT';
 
-export interface MerkleReceipt {
+export interface LocalIntegrityDigest {
   leafHash: string;
   blockHeight: number;
   parentRoot: string;
   currentRoot: string;
-  verified: boolean;
+  locallyConsistent: boolean;
   timestamp: number;
 }
 
-export interface ActionSuretyEvent {
+export interface ScenarioEvent {
   id: string;
   timestamp: number;
   agentId: string;
   agentName: string;
-  actionType: SuretyActionType;
+  actionType: ScenarioActionType;
   target: string;
-  decision: SuretyDecision;
+  decision: ScenarioDecision;
   policyRule: string;
   riskScore: number; // 0 - 100
   payloadSummary: string;
-  merkleReceipt: MerkleReceipt;
+  localDigest: LocalIntegrityDigest;
 }
 
 export interface TokenEfficiencyStats {

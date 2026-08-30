@@ -58,13 +58,11 @@ function sha256Sync(input: string): string {
       schedule[i] = paddedView.getUint32(offset + i * 4, false);
     }
     for (let i = 16; i < 64; i++) {
-      const s0 = rightRotate(schedule[i - 15], 7) ^
-        rightRotate(schedule[i - 15], 18) ^
-        (schedule[i - 15] >>> 3);
-      const s1 = rightRotate(schedule[i - 2], 17) ^
-        rightRotate(schedule[i - 2], 19) ^
-        (schedule[i - 2] >>> 10);
-      schedule[i] = (schedule[i - 16] + s0 + schedule[i - 7] + s1) >>> 0;
+      const word15 = schedule[i - 15]!;
+      const word2 = schedule[i - 2]!;
+      const s0 = rightRotate(word15, 7) ^ rightRotate(word15, 18) ^ (word15 >>> 3);
+      const s1 = rightRotate(word2, 17) ^ rightRotate(word2, 19) ^ (word2 >>> 10);
+      schedule[i] = (schedule[i - 16]! + s0 + schedule[i - 7]! + s1) >>> 0;
     }
 
     let a = h0;
@@ -79,7 +77,7 @@ function sha256Sync(input: string): string {
     for (let i = 0; i < 64; i++) {
       const sum1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
       const choice = (e & f) ^ (~e & g);
-      const temp1 = (h + sum1 + choice + SHA256_ROUND_CONSTANTS[i] + schedule[i]) >>> 0;
+      const temp1 = (h + sum1 + choice + SHA256_ROUND_CONSTANTS[i]! + schedule[i]!) >>> 0;
       const sum0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
       const majority = (a & b) ^ (a & c) ^ (b & c);
       const temp2 = (sum0 + majority) >>> 0;
@@ -127,18 +125,18 @@ export function computeMerkleRoot(hashes: string[]): string {
     return hash.toLowerCase();
   });
 
-  if (normalizedHashes.length === 1) return normalizedHashes[0];
+  if (normalizedHashes.length === 1) return normalizedHashes[0]!;
 
   let currentLevel = normalizedHashes;
   while (currentLevel.length > 1) {
     const nextLevel: string[] = [];
     for (let i = 0; i < currentLevel.length; i += 2) {
-      const left = currentLevel[i];
-      const right = i + 1 < currentLevel.length ? currentLevel[i + 1] : left;
+      const left = currentLevel[i]!;
+      const right = i + 1 < currentLevel.length ? currentLevel[i + 1]! : left;
       const combined = computeSha256(left + ':' + right);
       nextLevel.push(combined);
     }
     currentLevel = nextLevel;
   }
-  return currentLevel[0];
+  return currentLevel[0]!;
 }

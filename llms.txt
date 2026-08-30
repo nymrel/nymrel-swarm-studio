@@ -1,24 +1,22 @@
 # Nymrel Swarm Studio
-> Local-first visual command center & action surety ledger for multi-agent coding swarms.
 
-## Project Summary
-- Name: nymrel-swarm-studio
-- Organization: Nymrel (Parent: JalenBuilds LLC)
-- Primary URL: https://nymrel.com/products/swarm-studio
-- Contact: contact@nymrel.com
-- License: MIT License
+Nymrel Swarm Studio is a private, static, fixture-driven React reference interface maintained by Nymrel.
 
-## Key Capabilities
-- A2UI v0.8 Streaming Primitives: Decision Ballots, Parameter Sliders, Approval Gates, Diff Hunk Viewers, Campaign Progress Trackers.
-- Multi-Agent Fleet Roster: Codex Sol (GPT-5.6), Claude Opus 5, Gemini 3.6 Pro, Hermes 3 (Local RTX 4090), Cloudflare Edge Sentinel.
-- Action Surety Interceptor: Zero-trust AST interceptor with tamper-proof SHA-256 Merkle tree execution logs.
-- Token Peak-Efficiency Routing: Real-time cost breakdown optimizing high-volume test generation to local GPU ($0) and edge AI ($0.0005/k).
-- Workspace Inspector: Live multi-worktree AST diff monitoring with surgical one-click rollbacks.
+## Verified repository facts
 
-## Design System
-- Canvas Background: Warm Cream (#FAF8F2)
-- Panels & Cards: Soft Linen (#F4F0E6)
-- Primary Text & Dark Accents: Cedar Green (#2A332E)
-- Brand Accent & Highlights: Terracotta (#A8541F)
-- Border Accents: Warm Stone (#E2DDD2)
-- Verified Receipts: Sage Olive (#3B7A57)
+- Source: https://github.com/nymrel/nymrel-swarm-studio
+- License: MIT
+- Stack: React 19, Vite 8, TypeScript 7, Vitest 4, Oxlint, npm 11
+- Output: static files in `dist`
+- Data: bundled synthetic fixtures only
+- Persistence: none
+- Application network requests: none
+- External agents, repositories, providers, telemetry, files, commands, sandboxes, deployments, billing, customers, and revenue: not connected
+
+## Interface scope
+
+The interface demonstrates worker rosters, decision and protected-action cards, sample diffs, sample campaign progress, an illustrative routing-cost formula, and locally computed SHA-256/Merkle values. Interactions change browser memory only.
+
+Displayed decisions are not enforcement. Displayed hashes are not provenance, authenticity, immutability, or an external audit. Displayed cost values are not provider pricing, usage, savings, or invoices. The project does not claim conformance with an external agent-to-UI protocol.
+
+Use README.md and SECURITY.md as the human-readable source of truth. A build, release, or repository state does not prove a public deployment.
