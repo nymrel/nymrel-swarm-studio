@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSwarmStore } from '../state/swarmStore';
-import { Agent } from '../types';
+import type { Agent } from '../types';
 import { 
   Bot, 
   Activity, 
@@ -16,15 +16,15 @@ export const SwarmRoster: React.FC = () => {
     switch (status) {
       case 'active':
         return (
-          <span className="agent-status-badge" style={{ backgroundColor: '#EEF5F1', color: '#3B7A57' }}>
+          <span className="agent-status-badge" style={{ backgroundColor: '#EEF5F1', color: '#2F6B4B' }}>
             <span className="status-dot pulse-dot" style={{ backgroundColor: '#3B7A57' }} />
             Active
           </span>
         );
       case 'thinking':
         return (
-          <span className="agent-status-badge" style={{ backgroundColor: '#FDF6EC', color: '#C88A2E' }}>
-            <span className="status-dot pulse-dot" style={{ backgroundColor: '#C88A2E' }} />
+          <span className="agent-status-badge" style={{ backgroundColor: '#FDF6EC', color: '#744B09' }}>
+            <span className="status-dot pulse-dot" style={{ backgroundColor: '#744B09' }} />
             Synthesizing
           </span>
         );
@@ -42,10 +42,17 @@ export const SwarmRoster: React.FC = () => {
             Sandboxed
           </span>
         );
+      case 'blocked':
+        return (
+          <span className="agent-status-badge" style={{ backgroundColor: '#FDF0F0', color: '#8B3032' }}>
+            <span className="status-dot" style={{ backgroundColor: '#8B3032' }} />
+            Blocked fixture
+          </span>
+        );
       default:
         return (
-          <span className="agent-status-badge" style={{ backgroundColor: '#F4F0E6', color: '#8E8A80' }}>
-            <span className="status-dot" style={{ backgroundColor: '#8E8A80' }} />
+          <span className="agent-status-badge" style={{ backgroundColor: '#F4F0E6', color: '#555A54' }}>
+            <span className="status-dot" style={{ backgroundColor: '#555A54' }} />
             Idle
           </span>
         );
@@ -58,14 +65,14 @@ export const SwarmRoster: React.FC = () => {
         <div>
           <h2 className="section-title">
             <Bot size={18} color="#A8541F" />
-            Swarm Fleet Topology
+            Example worker roster
           </h2>
-          <p className="section-subtitle">Active distributed multi-agent workers across Local, Edge, and Frontier nodes</p>
+          <p className="section-subtitle">Synthetic roles and changing values for evaluating a command-deck layout</p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <span className="hardware-tag">RTX 4090: 1 Node</span>
-          <span className="hardware-tag">Workers AI: 1 Edge</span>
-          <span className="hardware-tag">Frontier: 3 Nodes</span>
+          <span className="hardware-tag">1 local example</span>
+          <span className="hardware-tag">1 edge example</span>
+          <span className="hardware-tag">3 hosted examples</span>
         </div>
       </div>
 
@@ -77,6 +84,15 @@ export const SwarmRoster: React.FC = () => {
               key={agent.id}
               className={`agent-card ${isSelected ? 'selected' : ''}`}
               onClick={() => store.selectAgent(isSelected ? null : agent.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  store.selectAgent(isSelected ? null : agent.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSelected}
               style={{ cursor: 'pointer' }}
             >
               <div className="agent-card-header">
@@ -138,16 +154,17 @@ export const SwarmRoster: React.FC = () => {
                 {selectedAgent.name.slice(0, 2)}
               </div>
               <strong style={{ fontSize: '14px', color: 'var(--color-text-primary)' }}>
-                {selectedAgent.name} Execution Packet & State
+                {selectedAgent.name} fixture details
               </strong>
-              <span className="a2ui-badge" style={{ background: '#EAE4D7' }}>
-                Fencing Gen: {selectedAgent.fencingGen}
+              <span className="status-badge" style={{ background: '#EAE4D7' }}>
+                Example generation: {selectedAgent.fencingGen}
               </span>
             </div>
             <button 
               className="btn btn-secondary btn-sm"
               onClick={() => store.selectAgent(null)}
               style={{ padding: '2px 6px' }}
+              aria-label="Close fixture details"
             >
               <X size={14} />
             </button>
@@ -156,24 +173,24 @@ export const SwarmRoster: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '12px' }}>
             <div className="eff-stat-card">
               <div className="eff-stat-value">{selectedAgent.totalTokens.toLocaleString()}</div>
-              <div className="eff-stat-label">Processed Tokens</div>
+              <div className="eff-stat-label">Illustrative tokens</div>
             </div>
             <div className="eff-stat-card">
               <div className="eff-stat-value">${selectedAgent.costPerHour.toFixed(2)}/hr</div>
-              <div className="eff-stat-label">Compute Cost Tier</div>
+              <div className="eff-stat-label">Illustrative hourly rate</div>
             </div>
             <div className="eff-stat-card">
               <div className="eff-stat-value">{selectedAgent.tokenRate} t/s</div>
-              <div className="eff-stat-label">Generation Velocity</div>
+              <div className="eff-stat-label">Illustrative velocity</div>
             </div>
             <div className="eff-stat-card">
               <div className="eff-stat-value">{selectedAgent.memoryUsageMb} MB</div>
-              <div className="eff-stat-label">Resident AST Buffer</div>
+              <div className="eff-stat-label">Illustrative memory</div>
             </div>
           </div>
 
           <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-            <strong>Active Lease Scope: </strong>
+            <strong>Example task label: </strong>
             <code style={{ fontFamily: 'var(--font-mono)', background: 'var(--color-bg-surface-alt)', padding: '2px 6px', borderRadius: '4px' }}>
               {selectedAgent.activeTask}
             </code>

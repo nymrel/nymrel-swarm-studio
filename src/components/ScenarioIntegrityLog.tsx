@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useSwarmStore, LogFilter } from '../state/swarmStore';
-import { ActionSuretyEvent } from '../types';
+import { useSwarmStore } from '../state/swarmStore';
+import type { LogFilter } from '../state/swarmStore';
+import type { ScenarioEvent } from '../types';
 import { 
   ShieldCheck, 
   Search, 
@@ -16,21 +17,25 @@ import {
   Check
 } from 'lucide-react';
 
-export const ActionSuretyLog: React.FC = () => {
+export const ScenarioIntegrityLog: React.FC = () => {
   const [state, store] = useSwarmStore();
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedHash(text);
-    setTimeout(() => setCopiedHash(null), 2000);
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedHash(text);
+      globalThis.setTimeout(() => setCopiedHash(null), 2000);
+    } catch {
+      store.showToast('Clipboard access is unavailable in this browser context.');
+    }
   };
 
-  const filteredLogs = state.suretyLogs.filter(log => {
+  const filteredLogs = state.scenarioLogs.filter(log => {
     // 1. Filter by decision type
     if (state.logFilter === 'ALLOW' && log.decision !== 'ALLOW') return false;
     if (state.logFilter === 'BLOCK' && log.decision !== 'BLOCK') return false;
-    if (state.logFilter === 'RECEIPTS' && !log.merkleReceipt.verified) return false;
+    if (state.logFilter === 'HASHES' && !log.localDigest.locallyConsistent) return false;
 
     // 2. Filter by search query
     if (state.searchQuery.trim()) {
@@ -38,21 +43,21 @@ export const ActionSuretyLog: React.FC = () => {
       const matchTarget = log.target.toLowerCase().includes(q);
       const matchAgent = log.agentName.toLowerCase().includes(q);
       const matchRule = log.policyRule.toLowerCase().includes(q);
-      const matchHash = log.merkleReceipt.leafHash.toLowerCase().includes(q);
+      const matchHash = log.localDigest.leafHash.toLowerCase().includes(q);
       return matchTarget || matchAgent || matchRule || matchHash;
     }
 
     return true;
   });
 
-  const getActionIcon = (actionType: ActionSuretyEvent['actionType']) => {
+  const getActionIcon = (actionType: ScenarioEvent['actionType']) => {
     switch (actionType) {
       case 'file_write': return <FileCode size={13} color="#2C6E8F" />;
       case 'shell_exec': return <Terminal size={13} color="#A8541F" />;
       case 'network_egress': return <Globe size={13} color="#D97706" />;
       case 'secret_read': return <Key size={13} color="#9E2A2B" />;
-      case 'git_commit': return <GitCommit size={13} color="#3B7A57" />;
-      default: return <Hash size={13} color="#656E66" />;
+      case 'git_commit': return <GitCommit size={13} color="#2F6B4B" />;
+      default: return <Hash size={13} color="#4F5952" />;
     }
   };
 
@@ -63,21 +68,21 @@ export const ActionSuretyLog: React.FC = () => {
         <div>
           <h2 className="section-title">
             <ShieldCheck size={18} color="#3B7A57" />
-            Action Surety & Merkle Security Log
+            Scenario integrity log
           </h2>
           <p className="section-subtitle">
-            Zero-Trust AST interceptor feed with SHA-256 tamper-proof execution receipts
+            Synthetic action records with locally recomputed SHA-256 leaves and roots—not enforcement, provenance, or an audit system
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span className="merkle-hash-badge" style={{ backgroundColor: '#EEF5F1', color: '#3B7A57', fontWeight: 600 }}>
-            <CheckCircle size={11} /> Root Verified
+          <span className="local-hash-badge" style={{ backgroundColor: '#EEF5F1', color: '#2F6B4B', fontWeight: 600 }}>
+            <CheckCircle size={11} /> Locally recomputed
           </span>
         </div>
       </div>
 
-      {/* Merkle Root Live Strip */}
-      <div style={{
+      {/* Locally recomputed fixture root */}
+      <div className="fixture-root-strip" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -90,13 +95,14 @@ export const ActionSuretyLog: React.FC = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Lock size={12} color="#A8541F" />
-          <span style={{ color: 'var(--color-text-secondary)' }}>MERKLE ROOT:</span>
+          <span style={{ color: 'var(--color-text-secondary)' }}>FIXTURE ROOT:</span>
           <strong style={{ color: 'var(--color-text-primary)' }}>{state.merkleRoot}</strong>
         </div>
         <button 
           className="btn btn-secondary btn-sm"
           style={{ padding: '2px 6px', fontSize: '10.5px' }}
-          onClick={() => handleCopy(state.merkleRoot)}
+          onClick={() => void handleCopy(state.merkleRoot)}
+          aria-label="Copy the locally computed fixture root"
         >
           {copiedHash === state.merkleRoot ? <Check size={11} /> : <Copy size={11} />}
           {copiedHash === state.merkleRoot ? 'Copied' : 'Copy'}
@@ -115,12 +121,13 @@ export const ActionSuretyLog: React.FC = () => {
           borderRadius: 'var(--radius-md)',
           padding: '4px 10px'
         }}>
-          <Search size={13} color="#8E8A80" />
+          <Search size={13} color="#555A54" />
           <input 
             type="text"
-            placeholder="Search action target, rule, agent or hash..."
+            placeholder="Search example target, rule, role, or hash…"
             value={state.searchQuery}
             onChange={(e) => store.setSearchQuery(e.target.value)}
+            aria-label="Search synthetic integrity records"
             style={{
               border: 'none',
               background: 'transparent',
@@ -133,26 +140,27 @@ export const ActionSuretyLog: React.FC = () => {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {(['ALL', 'ALLOW', 'BLOCK', 'RECEIPTS'] as LogFilter[]).map((f) => (
+        <div className="log-filter-deck" style={{ display: 'flex', gap: '4px' }}>
+          {(['ALL', 'ALLOW', 'BLOCK', 'HASHES'] as LogFilter[]).map((f) => (
             <button
               key={f}
               className={`btn btn-sm ${state.logFilter === f ? 'btn-primary' : 'btn-secondary'}`}
               onClick={() => store.setLogFilter(f)}
+              aria-pressed={state.logFilter === f}
               style={{ fontSize: '11px', padding: '4px 8px' }}
             >
-              {f === 'BLOCK' ? 'Blocked (Intercepts)' : f === 'RECEIPTS' ? 'Merkle Receipts' : f}
+              {f === 'BLOCK' ? 'Block scenarios' : f === 'HASHES' ? 'Local hashes' : f === 'ALLOW' ? 'Allow scenarios' : 'All'}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Surety Log Items List */}
-      <div className="surety-log-list">
+      {/* Scenario-integrity records */}
+      <div className="integrity-log-list">
         {filteredLogs.map((log) => {
           return (
-            <div key={log.id} className={`surety-log-item decision-${log.decision}`}>
-              <div className="surety-header-row">
+            <div key={log.id} className={`integrity-log-item decision-${log.decision}`}>
+              <div className="integrity-header-row">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {getActionIcon(log.actionType)}
                   <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
@@ -164,12 +172,12 @@ export const ActionSuretyLog: React.FC = () => {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span className="a2ui-badge" style={{
+                  <span className="status-badge" style={{
                     backgroundColor: log.decision === 'ALLOW' ? '#EEF5F1' : log.decision === 'BLOCK' ? '#FDF0F0' : '#FDF6EC',
-                    color: log.decision === 'ALLOW' ? '#3B7A57' : log.decision === 'BLOCK' ? '#9E2A2B' : '#C88A2E',
+                    color: log.decision === 'ALLOW' ? '#2F6B4B' : log.decision === 'BLOCK' ? '#9E2A2B' : '#744B09',
                     fontSize: '10px'
                   }}>
-                    {log.decision} ({log.riskScore}% RISK)
+                    {log.decision} · sample risk {log.riskScore}/100
                   </span>
                   <span style={{ fontSize: '10.5px', color: 'var(--color-text-muted)' }}>
                     {new Date(log.timestamp).toLocaleTimeString()}
@@ -178,7 +186,7 @@ export const ActionSuretyLog: React.FC = () => {
               </div>
 
               {/* Target & Payload */}
-              <div className="surety-target">
+              <div className="integrity-target">
                 {log.target}
               </div>
 
@@ -186,7 +194,7 @@ export const ActionSuretyLog: React.FC = () => {
                 {log.payloadSummary}
               </div>
 
-              {/* Policy & Merkle Proof Receipt Footer */}
+              {/* Fixture policy label and local hash */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -201,16 +209,16 @@ export const ActionSuretyLog: React.FC = () => {
                 </span>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span className="merkle-hash-badge" title={`Block Height: ${log.merkleReceipt.blockHeight}`}>
+                  <span className="local-hash-badge" title={`Fixture sequence: ${log.localDigest.blockHeight}`}>
                     <Hash size={10} />
-                    {log.merkleReceipt.leafHash.slice(0, 10)}...
+                    {log.localDigest.leafHash.slice(0, 10)}...
                   </span>
                   <button 
                     className="btn btn-secondary btn-sm"
                     style={{ padding: '1px 5px', fontSize: '9.5px' }}
-                    onClick={() => handleCopy(log.merkleReceipt.leafHash)}
+                    onClick={() => void handleCopy(log.localDigest.leafHash)}
                   >
-                    {copiedHash === log.merkleReceipt.leafHash ? 'Copied' : 'Receipt'}
+                    {copiedHash === log.localDigest.leafHash ? 'Copied' : 'Copy hash'}
                   </button>
                 </div>
               </div>
@@ -219,7 +227,7 @@ export const ActionSuretyLog: React.FC = () => {
         })}
         {filteredLogs.length === 0 && (
           <div style={{ textAlign: 'center', padding: '30px', color: 'var(--color-text-muted)', fontSize: '13px' }}>
-            No security intercept events match the current filter or search criteria.
+            No synthetic records match the current filter or search.
           </div>
         )}
       </div>

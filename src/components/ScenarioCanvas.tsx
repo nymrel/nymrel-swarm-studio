@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSwarmStore } from '../state/swarmStore';
-import { 
+import type { SwarmStore } from '../state/swarmStore';
+import type {
   DecisionBallotCard, 
   ApprovalGateCard, 
   ParameterSliderCard, 
@@ -21,7 +22,7 @@ import {
   Layers
 } from 'lucide-react';
 
-export const A2UICanvas: React.FC = () => {
+export const ScenarioCanvas: React.FC = () => {
   const [state, store] = useSwarmStore();
 
   return (
@@ -30,30 +31,30 @@ export const A2UICanvas: React.FC = () => {
         <div>
           <h2 className="section-title">
             <Sparkles size={18} color="#A8541F" />
-            Google A2UI v0.8 Streaming Feed
+            Interactive review fixtures
           </h2>
           <p className="section-subtitle">
-            Agent-to-UI live streaming primitives: Decision Ballots, Parameter Sliders, Approval Gates, and Diff Hunks
+            Browser-only examples for decisions, protected-action reviews, parameter controls, diffs, and progress states
           </p>
         </div>
-        <span className="a2ui-badge" style={{ backgroundColor: '#FBEFEA', color: '#A8541F' }}>
-          Active Cards: {state.cards.length}
+        <span className="status-badge" style={{ backgroundColor: '#FBEFEA', color: '#A8541F' }}>
+          {state.cards.length} sample cards
         </span>
       </div>
 
-      <div className="a2ui-feed">
+      <div className="scenario-feed">
         {state.cards.map((card) => {
           switch (card.type) {
             case 'approval-gate':
-              return <ApprovalGateItem key={card.id} card={card as ApprovalGateCard} store={store} />;
+              return <ApprovalGateItem key={card.id} card={card} store={store} />;
             case 'decision-ballot':
-              return <DecisionBallotItem key={card.id} card={card as DecisionBallotCard} store={store} />;
+              return <DecisionBallotItem key={card.id} card={card} store={store} />;
             case 'diff-viewer':
-              return <DiffViewerItem key={card.id} card={card as DiffViewerCard} store={store} />;
+              return <DiffViewerItem key={card.id} card={card} store={store} />;
             case 'parameter-slider':
-              return <ParameterSliderItem key={card.id} card={card as ParameterSliderCard} store={store} />;
+              return <ParameterSliderItem key={card.id} card={card} store={store} />;
             case 'progress-tracker':
-              return <ProgressTrackerItem key={card.id} card={card as ProgressTrackerCard} />;
+              return <ProgressTrackerItem key={card.id} card={card} />;
             default:
               return null;
           }
@@ -64,28 +65,28 @@ export const A2UICanvas: React.FC = () => {
 };
 
 // Subcomponent: Approval Gate
-const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: any }> = ({ card, store }) => {
+const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: SwarmStore }> = ({ card, store }) => {
   const isPending = card.status === 'pending';
 
   return (
-    <div className="a2ui-card type-approval-gate">
-      <div className="a2ui-card-meta">
+    <div className="scenario-card type-approval-gate">
+      <div className="scenario-card-meta">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="a2ui-badge" style={{ backgroundColor: '#FDF0F0', color: '#9E2A2B' }}>
+          <span className="status-badge" style={{ backgroundColor: '#FDF0F0', color: '#9E2A2B' }}>
             <ShieldAlert size={12} />
-            Approval Gate ({card.riskLevel.toUpperCase()} RISK)
+            Protected-action scenario ({card.riskLevel.toUpperCase()} risk)
           </span>
           <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-            Proposer: <strong>{card.agentName}</strong>
+            Example owner: <strong>{card.agentName}</strong>
           </span>
         </div>
         {isPending ? (
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11.5px', color: '#C88A2E' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11.5px', color: '#744B09' }}>
             <Clock size={12} />
-            {card.timeRemainingSeconds}s remaining
+            {card.timeRemainingSeconds}s fixture countdown
           </span>
         ) : (
-          <span className="a2ui-badge" style={{ 
+          <span className="status-badge" style={{
             backgroundColor: card.status === 'approved' ? '#EEF5F1' : '#FDF0F0',
             color: card.status === 'approved' ? '#3B7A57' : '#9E2A2B'
           }}>
@@ -107,8 +108,8 @@ const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: any }> = ({ ca
 
       {/* Code or command payload preview */}
       <div className="diff-box">
-        <div style={{ fontSize: '11px', color: '#8E8A80', marginBottom: '4px' }}>
-          # Intercepted Execution Payload:
+        <div style={{ fontSize: '11px', color: '#D6D8D4', marginBottom: '4px' }}>
+          # Example payload · display only
         </div>
         <code>{card.commandOrPayload}</code>
         {card.diffSnippet && (
@@ -128,26 +129,26 @@ const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: any }> = ({ ca
           <button 
             className="btn btn-secondary btn-sm"
             onClick={() => store.sandboxGate(card.id)}
-            title="Execute within an isolated micro-Wasm sandbox"
+            title="Mark this fixture for sandbox review"
           >
             <Box size={13} color="#2C6E8F" />
-            <span>Sandbox Execution</span>
+            <span>Mark sandbox review</span>
           </button>
           <button 
             className="btn btn-danger btn-sm"
             onClick={() => store.rejectGate(card.id)}
-            title="Reject and abort operation safely"
+            title="Mark this fixture rejected"
           >
             <X size={13} />
-            <span>Reject & Intercept</span>
+            <span>Mark rejected</span>
           </button>
           <button 
             className="btn btn-success btn-sm"
             onClick={() => store.approveGate(card.id)}
-            title="Authorize command with cryptographic operator signature"
+            title="Mark this fixture approved"
           >
             <Check size={13} />
-            <span>Authorize & Deploy</span>
+            <span>Mark approved</span>
           </button>
         </div>
       )}
@@ -156,23 +157,23 @@ const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: any }> = ({ ca
 };
 
 // Subcomponent: Decision Ballot
-const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: any }> = ({ card, store }) => {
+const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: SwarmStore }> = ({ card, store }) => {
   const totalVotes = card.options.reduce((acc, opt) => acc + opt.votes, 0);
 
   return (
-    <div className="a2ui-card type-decision-ballot">
-      <div className="a2ui-card-meta">
+    <div className="scenario-card type-decision-ballot">
+      <div className="scenario-card-meta">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="a2ui-badge" style={{ backgroundColor: '#EDF5F8', color: '#2C6E8F' }}>
+          <span className="status-badge" style={{ backgroundColor: '#EDF5F8', color: '#2C6E8F' }}>
             <Vote size={12} />
-            Decision Ballot
+            Decision fixture
           </span>
           <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-            Proposer: <strong>{card.proposerAgent}</strong>
+            Example owner: <strong>{card.proposerAgent}</strong>
           </span>
         </div>
         <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-          {totalVotes} total agent/operator votes
+          {totalVotes} sample votes
         </span>
       </div>
 
@@ -185,7 +186,7 @@ const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: any }> = (
         </p>
       </div>
 
-      <div className="ballot-options-list">
+      <div className="ballot-options-list" role="radiogroup" aria-label={card.title}>
         {card.options.map((opt) => {
           const pct = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
           return (
@@ -193,6 +194,15 @@ const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: any }> = (
               key={opt.id}
               className={`ballot-option-row ${opt.userVoted ? 'voted' : ''}`}
               onClick={() => store.castBallotVote(card.id, opt.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  store.castBallotVote(card.id, opt.id);
+                }
+              }}
+              role="radio"
+              tabIndex={0}
+              aria-checked={Boolean(opt.userVoted)}
             >
               <div className="ballot-option-header">
                 <div>
@@ -210,20 +220,20 @@ const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: any }> = (
                     {pct}%
                   </span>
                   <div style={{ fontSize: '10.5px', color: 'var(--color-text-muted)' }}>
-                    {opt.votes} votes
+                    {opt.votes} {opt.votes === 1 ? 'vote' : 'votes'}
                   </div>
                 </div>
               </div>
 
               {/* Progress bar */}
-              <div className="ballot-vote-bar-bg">
+              <div className="ballot-vote-bar-bg" role="progressbar" aria-label={`${opt.label} sample vote share`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
                 <div className="ballot-vote-bar-fill" style={{ width: `${pct}%` }} />
               </div>
 
               {/* Agent Endorsements */}
               {opt.agentEndorsements.length > 0 && (
                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '2px' }}>
-                  <span style={{ fontSize: '10.5px', color: 'var(--color-text-muted)' }}>Endorsed by:</span>
+                  <span style={{ fontSize: '10.5px', color: 'var(--color-text-muted)' }}>Sample endorsements:</span>
                   {opt.agentEndorsements.map((agent, aIdx) => (
                     <span key={aIdx} className="hardware-tag" style={{ fontSize: '10px', padding: '1px 5px' }}>
                       {agent}
@@ -240,16 +250,16 @@ const DecisionBallotItem: React.FC<{ card: DecisionBallotCard; store: any }> = (
 };
 
 // Subcomponent: Parameter Slider
-const ParameterSliderItem: React.FC<{ card: ParameterSliderCard; store: any }> = ({ card, store }) => {
+const ParameterSliderItem: React.FC<{ card: ParameterSliderCard; store: SwarmStore }> = ({ card, store }) => {
   return (
-    <div className="a2ui-card">
-      <div className="a2ui-card-meta">
-        <span className="a2ui-badge" style={{ backgroundColor: '#FDF6EC', color: '#C88A2E' }}>
+    <div className="scenario-card">
+      <div className="scenario-card-meta">
+        <span className="status-badge" style={{ backgroundColor: '#FDF6EC', color: '#744B09' }}>
           <Sliders size={12} />
-          Parameter Tuning
+          Fixture tuning
         </span>
         <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-          Target: {card.affectedAgents.join(', ')}
+          Example roles: {card.affectedAgents.join(', ')}
         </span>
       </div>
 
@@ -270,6 +280,7 @@ const ParameterSliderItem: React.FC<{ card: ParameterSliderCard; store: any }> =
           step={card.step}
           value={card.value}
           onChange={(e) => store.updateParameter(card.id, parseFloat(e.target.value))}
+          aria-label={card.title}
           style={{ flex: 1, accentColor: 'var(--color-brand-terracotta)', cursor: 'pointer' }}
         />
         <div style={{
@@ -291,17 +302,17 @@ const ParameterSliderItem: React.FC<{ card: ParameterSliderCard; store: any }> =
 };
 
 // Subcomponent: Diff Viewer
-const DiffViewerItem: React.FC<{ card: DiffViewerCard; store: any }> = ({ card, store }) => {
+const DiffViewerItem: React.FC<{ card: DiffViewerCard; store: SwarmStore }> = ({ card, store }) => {
   return (
-    <div className="a2ui-card type-diff-viewer">
-      <div className="a2ui-card-meta">
+    <div className="scenario-card type-diff-viewer">
+      <div className="scenario-card-meta">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="a2ui-badge" style={{ backgroundColor: '#EEF5F1', color: '#3B7A57' }}>
+          <span className="status-badge" style={{ backgroundColor: '#EEF5F1', color: '#2F6B4B' }}>
             <GitPullRequest size={12} />
-            Live AST Diff Stream
+            Sample diff · display only
           </span>
           <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-            Proposer: <strong>{card.proposerAgent}</strong>
+            Example owner: <strong>{card.proposerAgent}</strong>
           </span>
         </div>
         <span className="hardware-tag">{card.filePath}</span>
@@ -340,7 +351,7 @@ const DiffViewerItem: React.FC<{ card: DiffViewerCard; store: any }> = ({ card, 
                 </button>
               </>
             ) : (
-              <span className="a2ui-badge" style={{
+              <span className="status-badge" style={{
                 backgroundColor: hunk.status === 'accepted' ? '#EEF5F1' : '#FDF0F0',
                 color: hunk.status === 'accepted' ? '#3B7A57' : '#9E2A2B'
               }}>
@@ -357,14 +368,14 @@ const DiffViewerItem: React.FC<{ card: DiffViewerCard; store: any }> = ({ card, 
 // Subcomponent: Progress Tracker
 const ProgressTrackerItem: React.FC<{ card: ProgressTrackerCard }> = ({ card }) => {
   return (
-    <div className="a2ui-card">
-      <div className="a2ui-card-meta">
-        <span className="a2ui-badge" style={{ backgroundColor: '#E8EFEA', color: '#2A332E' }}>
+    <div className="scenario-card">
+      <div className="scenario-card-meta">
+        <span className="status-badge" style={{ backgroundColor: '#E8EFEA', color: '#2A332E' }}>
           <Layers size={12} />
-          Swarm Campaign
+          Sample campaign
         </span>
         <span style={{ fontSize: '11.5px', color: 'var(--color-text-muted)' }}>
-          ETA: ~{card.etaSeconds}s remaining
+          Fixture timer: ~{card.etaSeconds}s
         </span>
       </div>
 
@@ -382,7 +393,7 @@ const ProgressTrackerItem: React.FC<{ card: ProgressTrackerCard }> = ({ card }) 
         </div>
       </div>
 
-      <div className="ballot-vote-bar-bg" style={{ height: '8px' }}>
+      <div className="ballot-vote-bar-bg" style={{ height: '8px' }} role="progressbar" aria-label="Sample campaign progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={card.overallProgress}>
         <div className="ballot-vote-bar-fill" style={{ width: `${card.overallProgress}%`, backgroundColor: '#3B7A57' }} />
       </div>
 
@@ -402,8 +413,8 @@ const ProgressTrackerItem: React.FC<{ card: ProgressTrackerCard }> = ({ card }) 
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {m.status === 'completed' && <CheckCircle2 size={13} color="#3B7A57" />}
-              {m.status === 'in_progress' && <Clock size={13} color="#C88A2E" className="pulse-dot" />}
-              {m.status === 'queued' && <Box size={13} color="#8E8A80" />}
+              {m.status === 'in_progress' && <Clock size={13} color="#744B09" className="pulse-dot" />}
+              {m.status === 'queued' && <Box size={13} color="#555A54" />}
               <span style={{ 
                 color: m.status === 'completed' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
                 fontWeight: m.status === 'in_progress' ? 600 : 400

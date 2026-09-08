@@ -1,22 +1,41 @@
-# Security Policy
+# Security policy
 
-## Reporting Security Vulnerabilities
+## Supported code
 
-If you discover a vulnerability in Nymrel Swarm Studio, please report it privately to our security team at `security@jalenbuilds.com` or `contact@nymrel.com`. Please **do not** open public GitHub issues for undisclosed vulnerabilities.
+Security fixes target the current `main` branch. This repository is a static reference interface, not a security control, agent runtime, or audit service.
 
-## Threat Model & Surety Guarantees
+## Actual security boundary
 
-Nymrel Swarm Studio operates as an in-process and edge interceptor layer between autonomous agent model workers and execution runtimes (filesystem, shell, network, databases):
+The built application:
 
-1. **Destructive Command Interception (`RULE-SEC-00`)**:
-   - Commands attempting root directory deletion (`rm -rf /`, `mkfs`, raw block device writes) are blocked unconditionally at the interceptor boundary before shell dispatch.
-2. **Credential Vault Protection (`RULE-VAULT-01`)**:
-   - Environment variables matching private keys, API secrets, AWS keys, or SSH credentials cannot be queried directly by subagent tool calls.
-3. **Outbound Egress Sandboxing (`RULE-NET-09`)**:
-   - Unverified egress endpoints are routed through an isolated ephemeral Wasm proxy to prevent prompt injection data exfiltration.
-4. **Cryptographic Tamper-Proof Merkle Proofs**:
-   - Every execution event emits a SHA-256 leaf hash linked to the global Merkle root for immutable post-incident auditability.
+- reads bundled synthetic fixtures;
+- updates in-memory browser state;
+- computes local SHA-256 leaves and aggregate roots for those fixtures;
+- makes no application-level network requests;
+- has no authentication, secrets, persistent storage, backend, shell, filesystem, provider, payment, or deployment integration.
 
-## Coordinated Disclosure
+Displayed allow, block, sandbox, approval, diff, rollback, cost, and worker states are examples. A displayed hash establishes only that the bundled local algorithm produced the shown value. It does not establish provenance, authenticity, immutability, enforcement, or third-party verification.
 
-We strive to respond to all valid vulnerability submissions within 24 business hours and publish patched releases promptly.
+## Browser hardening
+
+The static-host header policy denies application connections, framing, forms, objects, and browser capabilities. Scripts and fonts are same-origin. Inline styles remain enabled because the current React views use style props for data-driven layout; no untrusted HTML is rendered, and scripts do not allow inline execution. Any future untrusted content or backend integration must remove that assumption and receive a new threat model.
+
+Dependencies install with lifecycle scripts disabled in CI. GitHub Actions are pinned by immutable commit, workflows use least-privilege permissions, releases package prebuilt bytes, and static checks reject misleading capability claims.
+
+## Integration requirements
+
+Before connecting an agent, repository, model provider, telemetry stream, file operation, command, credential, network destination, deployment provider, or persistent store:
+
+1. define the trust boundary and data classification;
+2. authenticate and authorize every operation server-side;
+3. validate schemas at every external boundary;
+4. add idempotency, audit retention, revocation, and failure-mode design;
+5. protect against request forgery, injection, path traversal, secret exposure, replay, and confused-deputy behavior;
+6. prove that UI labels reflect captured backend state rather than optimistic client state;
+7. complete independent security review and operator acceptance.
+
+Do not reuse the fixture decision labels as an enforcement implementation.
+
+## Reporting
+
+Report vulnerabilities privately to `security@nymrel.com`. Include the affected commit, reproduction steps, impact, and any suggested mitigation. Do not include real credentials, customer information, or destructive proof-of-concept payloads.

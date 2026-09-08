@@ -1,35 +1,37 @@
-# Contributing to Nymrel Swarm Studio
+# Contributing
 
-We welcome contributions from engineers, researchers, and agent architects.
+Nymrel Swarm Studio is intentionally narrow: a truthful, static reference interface. Contributions must preserve that boundary.
 
-## Development Workflow
+## Setup
 
-1. **Prerequisites**: Node.js v20.0+ and npm v9.0+.
-2. **Setup**:
-   ```bash
-   git clone https://github.com/nymrel/nymrel-swarm-studio.git
-   cd nymrel-swarm-studio
-   npm install
-   ```
-3. **Run Dev Server**:
-   ```bash
-   npm run dev
-   ```
-4. **Run Unit Tests**:
-   ```bash
-   npm test
-   ```
-5. **Verify Production Build**:
-   ```bash
-   npm run build
-   ```
+Use Node.js 22.12 through 26 and npm 11. The repository default is recorded in `.node-version`.
 
-## Code Guidelines
+```powershell
+npm ci --ignore-scripts
+npm run check
+npm run audit:ci
+```
 
-- **Warm Paper Aesthetics**: Maintain Nymrel warm paper design tokens (`#FAF8F2`, `#F4F0E6`, `#2A332E`, `#A8541F`, `#E2DDD2`). Do not force dark mode.
-- **A2UI Schema Compliance**: New interactive components must adhere to the Google A2UI v0.8 streaming card specification.
-- **Zero-Dependency Core**: Cryptographic Merkle calculation and security rules should run smoothly across both Node.js test runners and browser runtimes without heavy binary dependencies.
+Use `npm run dev` only for bounded local review and stop the server afterward.
 
-## Dual-Audience Governance
+## Change requirements
 
-Every public repository under Nymrel must maintain structured machine metadata (`parentOrganization: Nymrel -> JalenBuilds LLC`, JSON-LD entity graph, `/llms.txt`).
+- Keep every worker, event, cost, path, decision, and metric visibly labeled as synthetic or illustrative.
+- Do not imply a backend, live telemetry, execution, enforcement, persistence, provider integration, deployment, revenue, customer, pricing, or protocol conformance that the repository cannot prove.
+- Import real TypeScript sources in tests. Do not test copied implementations.
+- Preserve keyboard access, visible focus, reduced motion, responsive layouts, and meaningful empty/error states.
+- Validate external data with a schema before adding any integration.
+- Keep dependencies exact-pinned and explain new runtime dependencies.
+- Do not weaken CI, truth checks, security headers, bundle budgets, or workflow permissions to make a change pass.
+
+## Pull requests
+
+Keep changes scoped and include:
+
+- the user outcome and capability boundary;
+- tests and validation commands;
+- screenshots for visible changes at desktop and mobile widths;
+- security, accessibility, performance, and migration notes where relevant;
+- any external gate that remains unproven.
+
+Maintainers may require an independent acceptance review for production-impacting or trust-sensitive changes.

@@ -6,11 +6,11 @@ export const TopologyView: React.FC = () => {
   const [state] = useSwarmStore();
 
   const topologyLinks = [
-    { source: 'Claude Opus 5 (UX Orchestrator)', target: 'Codex Sol (System Architect)', protocol: 'gRPC Bus', rate: '42 msg/s' },
-    { source: 'Codex Sol (System Architect)', target: 'Hermes 3 (Local GPU)', protocol: 'Shared Memory IPC', rate: '88 msg/s' },
-    { source: 'Claude Opus 5 (UX Orchestrator)', target: 'Gemini 3.6 Pro (Advisory)', protocol: 'SSE EventStream', rate: '24 msg/s' },
-    { source: 'Hermes 3 (Local GPU)', target: 'Cloudflare Sentinel Agent', protocol: 'HTTP/2 Wasm Gateway', rate: '65 msg/s' },
-    { source: 'Cloudflare Sentinel Agent', target: 'Action Surety Interceptor', protocol: 'Zero-Trust Merkle Pipe', rate: '110 msg/s' }
+    { source: 'Experience worker', target: 'Architecture worker', protocol: 'Example event channel', rate: '42 sample events/s' },
+    { source: 'Architecture worker', target: 'Local test worker', protocol: 'Example local channel', rate: '88 sample events/s' },
+    { source: 'Experience worker', target: 'Verification worker', protocol: 'Example review channel', rate: '24 sample events/s' },
+    { source: 'Local test worker', target: 'Edge policy worker', protocol: 'Example policy channel', rate: '65 sample events/s' },
+    { source: 'Edge policy worker', target: 'Integrity log', protocol: 'Example digest channel', rate: '110 sample events/s' },
   ];
 
   return (
@@ -19,14 +19,14 @@ export const TopologyView: React.FC = () => {
         <div>
           <h2 className="section-title">
             <Network size={18} color="#A8541F" />
-            Live Swarm Agent Topology & Interconnect Bus
+            Example coordination topology
           </h2>
           <p className="section-subtitle">
-            Zero-contention peer communication channels, vector clock coordination, and Merkle telemetry
+            A static relationship model with animated fixture values; no network channels or workers are connected
           </p>
         </div>
-        <span className="a2ui-badge" style={{ backgroundColor: '#EEF5F1', color: '#3B7A57' }}>
-          Bus Protocol: v1.4 Active
+        <span className="status-badge" style={{ backgroundColor: '#EEF5F1', color: '#2F6B4B' }}>
+          Static topology fixture
         </span>
       </div>
 
@@ -85,7 +85,7 @@ export const TopologyView: React.FC = () => {
         {/* Bus Links Matrix */}
         <div style={{ width: '100%' }}>
           <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '10px' }}>
-            Active Inter-Agent Data Channels
+            Sample relationship matrix
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {topologyLinks.map((link, idx) => (
@@ -110,7 +110,7 @@ export const TopologyView: React.FC = () => {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span className="hardware-tag">{link.protocol}</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#3B7A57', fontWeight: 600 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#2F6B4B', fontWeight: 600 }}>
                     {link.rate}
                   </span>
                 </div>

@@ -1,107 +1,142 @@
-// Pure TypeScript SHA-256 implementation for deterministic browser & Node test runner compatibility
-function sha256Sync(ascii: string): string {
-  function rightRotate(value: number, amount: number) {
-    return (value >>> amount) | (value << (32 - amount));
-  }
+// Fixed SHA-256 constants from FIPS PUB 180-4. Keeping the implementation
+// synchronous preserves the existing browser/store API while TextEncoder makes
+// string hashing match Node and Web Crypto's UTF-8 semantics.
+const SHA256_INITIAL_STATE = [
+  0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+  0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+] as const;
 
-  const mathPow = Math.pow;
-  const maxWord = mathPow(2, 32);
-  let i: number, j: number;
-  let result = '';
+const SHA256_ROUND_CONSTANTS = [
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
+  0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+  0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
+  0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+  0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+  0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3,
+  0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5,
+  0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+  0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+] as const;
 
-  const words: number[] = [];
-  const asciiBitLength = ascii.length * 8;
+const SHA256_HEX_PATTERN = /^0x[0-9a-f]{64}$/i;
 
-  let hash: number[] = [];
-  const k: number[] = [];
-  let primeCounter = 0;
+function rightRotate(value: number, amount: number): number {
+  return (value >>> amount) | (value << (32 - amount));
+}
 
-  const isComposite: Record<number, number> = {};
-  for (let candidate = 2; primeCounter < 64; candidate++) {
-    if (!isComposite[candidate]) {
-      for (i = 0; i < 300; i += candidate) {
-        isComposite[i] = candidate;
-      }
-      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
-      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+function sha256Sync(input: string): string {
+  const inputBytes = new TextEncoder().encode(input);
+  const paddedLength = Math.ceil((inputBytes.length + 9) / 64) * 64;
+  const padded = new Uint8Array(paddedLength);
+  padded.set(inputBytes);
+  padded[inputBytes.length] = 0x80;
+
+  const bitLength = inputBytes.length * 8;
+  const paddedView = new DataView(padded.buffer);
+  paddedView.setUint32(paddedLength - 8, Math.floor(bitLength / 0x100000000), false);
+  paddedView.setUint32(paddedLength - 4, bitLength >>> 0, false);
+
+  let h0: number = SHA256_INITIAL_STATE[0];
+  let h1: number = SHA256_INITIAL_STATE[1];
+  let h2: number = SHA256_INITIAL_STATE[2];
+  let h3: number = SHA256_INITIAL_STATE[3];
+  let h4: number = SHA256_INITIAL_STATE[4];
+  let h5: number = SHA256_INITIAL_STATE[5];
+  let h6: number = SHA256_INITIAL_STATE[6];
+  let h7: number = SHA256_INITIAL_STATE[7];
+  const schedule = new Uint32Array(64);
+
+  for (let offset = 0; offset < paddedLength; offset += 64) {
+    for (let i = 0; i < 16; i++) {
+      schedule[i] = paddedView.getUint32(offset + i * 4, false);
     }
-  }
-
-  hash = hash.slice(0, 8);
-
-  let formatted = ascii + '\x80';
-  while ((formatted.length % 64) !== 56) {
-    formatted += '\x00';
-  }
-  
-  for (i = 0; i < formatted.length; i++) {
-    j = formatted.charCodeAt(i);
-    if (j >> 8) return ''; // ASCII check
-    words[i >> 2] |= j << (((3 - i) % 4) * 8);
-  }
-  words[words.length] = (asciiBitLength / maxWord) | 0;
-  words[words.length] = asciiBitLength;
-
-  for (j = 0; j < words.length; ) {
-    const w = words.slice(j, (j += 16));
-    const oldHash = hash;
-    hash = hash.slice(0, 8);
-
-    for (i = 0; i < 64; i++) {
-      const w15 = w[i - 15],
-        w2 = w[i - 2];
-
-      const s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
-      const s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
-      w[i] =
-        i < 16
-          ? w[i]
-          : (w[i - 16] + s0 + w[i - 7] + s1) | 0;
-
-      const s1h = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
-      const ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
-      const temp1 = (hash[7] + s1h + ch + k[i] + w[i]) | 0;
-      const s0h = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22);
-      const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
-      const temp2 = (s0h + maj) | 0;
-
-      hash = [(temp1 + temp2) | 0].concat(hash);
-      hash[4] = (hash[4] + temp1) | 0;
+    for (let i = 16; i < 64; i++) {
+      const word15 = schedule[i - 15]!;
+      const word2 = schedule[i - 2]!;
+      const s0 = rightRotate(word15, 7) ^ rightRotate(word15, 18) ^ (word15 >>> 3);
+      const s1 = rightRotate(word2, 17) ^ rightRotate(word2, 19) ^ (word2 >>> 10);
+      schedule[i] = (schedule[i - 16]! + s0 + schedule[i - 7]! + s1) >>> 0;
     }
 
-    for (i = 0; i < 8; i++) {
-      hash[i] = (hash[i] + oldHash[i]) | 0;
+    let a = h0;
+    let b = h1;
+    let c = h2;
+    let d = h3;
+    let e = h4;
+    let f = h5;
+    let g = h6;
+    let h = h7;
+
+    for (let i = 0; i < 64; i++) {
+      const sum1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
+      const choice = (e & f) ^ (~e & g);
+      const temp1 = (h + sum1 + choice + SHA256_ROUND_CONSTANTS[i]! + schedule[i]!) >>> 0;
+      const sum0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
+      const majority = (a & b) ^ (a & c) ^ (b & c);
+      const temp2 = (sum0 + majority) >>> 0;
+
+      h = g;
+      g = f;
+      f = e;
+      e = (d + temp1) >>> 0;
+      d = c;
+      c = b;
+      b = a;
+      a = (temp1 + temp2) >>> 0;
     }
+
+    h0 = (h0 + a) >>> 0;
+    h1 = (h1 + b) >>> 0;
+    h2 = (h2 + c) >>> 0;
+    h3 = (h3 + d) >>> 0;
+    h4 = (h4 + e) >>> 0;
+    h5 = (h5 + f) >>> 0;
+    h6 = (h6 + g) >>> 0;
+    h7 = (h7 + h) >>> 0;
   }
 
-  for (i = 0; i < 8; i++) {
-    for (let b = 3; b >= 0; b--) {
-      const byte = (hash[i] >> (b * 8)) & 255;
-      result += (byte < 16 ? '0' : '') + byte.toString(16);
-    }
-  }
-  return result;
+  return [h0, h1, h2, h3, h4, h5, h6, h7]
+    .map(word => word.toString(16).padStart(8, '0'))
+    .join('');
 }
 
 export function computeSha256(data: string | object): string {
   const str = typeof data === 'string' ? data : JSON.stringify(data);
+  if (str === undefined) {
+    throw new TypeError('SHA-256 input must be a JSON-serializable string or object');
+  }
   return '0x' + sha256Sync(str);
 }
 
 export function computeMerkleRoot(hashes: string[]): string {
   if (hashes.length === 0) return '0x0000000000000000000000000000000000000000000000000000000000000000';
-  if (hashes.length === 1) return hashes[0];
 
-  let currentLevel = [...hashes];
+  const normalizedHashes = hashes.map((hash, index) => {
+    if (!SHA256_HEX_PATTERN.test(hash)) {
+      throw new TypeError(`Invalid SHA-256 leaf at index ${index}`);
+    }
+    return hash.toLowerCase();
+  });
+
+  if (normalizedHashes.length === 1) return normalizedHashes[0]!;
+
+  let currentLevel = normalizedHashes;
   while (currentLevel.length > 1) {
     const nextLevel: string[] = [];
     for (let i = 0; i < currentLevel.length; i += 2) {
-      const left = currentLevel[i];
-      const right = i + 1 < currentLevel.length ? currentLevel[i + 1] : left;
+      const left = currentLevel[i]!;
+      const right = i + 1 < currentLevel.length ? currentLevel[i + 1]! : left;
       const combined = computeSha256(left + ':' + right);
       nextLevel.push(combined);
     }
     currentLevel = nextLevel;
   }
-  return currentLevel[0];
+  return currentLevel[0]!;
 }
