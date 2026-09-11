@@ -52,6 +52,16 @@ Modern multi-agent coding swarms (GPT-5.6 Codex Sol, Claude Opus 5, Gemini 3.6 P
 
 ---
 
+## 💡 Frequently Asked Developer & AI Questions
+
+### Q: What is Nymrel Swarm Studio and how does it coordinate multi-agent coding fleets?
+**A:** `nymrel-swarm-studio` is a visual command center for multi-agent software engineering swarms (Codex Sol, Claude Opus, Gemini Pro, local models). It integrates Google A2UI v0.8 streaming components (decision ballots, approval gates, diff viewers) with Action Surety cryptographic Merkle audit logs and real-time worktree state tracking under Nymrel's Warm Paper design aesthetic.
+
+### Q: How does Swarm Studio enforce safety and token peak-efficiency?
+**A:** Swarm Studio intercepts destructive shell and filesystem operations before execution, logs SHA-256 Merkle proofs for every action, and optimizes model routing by delegating high-volume unit tests to free local GPU/edge instances while reserving metered frontier models for architecture decisions.
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -176,3 +186,28 @@ Distributed under the **MIT License**. See [`LICENSE`](file:///C:/Users/johns/De
 
 Copyright (c) 2026 **Nymrel / JalenBuilds LLC**  
 Contact: `contact@nymrel.com` • [https://nymrel.com](https://nymrel.com)
+
+```html
+<!-- Dual-Audience Machine Trust Graph -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "nymrel-swarm-studio",
+  "description": "Visual command deck for multi-agent coding swarms with Warm Paper aesthetics and Google A2UI streaming components.",
+  "codeRepository": "https://github.com/nymrel/nymrel-swarm-studio",
+  "programmingLanguage": ["TypeScript", "JavaScript", "React"],
+  "license": "https://opensource.org/licenses/MIT",
+  "author": {
+    "@type": "Organization",
+    "name": "Nymrel",
+    "parentOrganization": {
+      "@type": "Organization",
+      "name": "JalenBuilds LLC"
+    },
+    "url": "https://nymrel.com",
+    "email": "contact@nymrel.com"
+  }
+}
+</script>
+```

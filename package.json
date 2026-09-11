@@ -6,6 +6,18 @@
   "license": "MIT",
   "author": "Nymrel <contact@nymrel.com>",
   "homepage": "https://nymrel.com/products/swarm-studio",
+  "keywords": [
+    "multi-agent-ui",
+    "swarm-studio",
+    "agent-orchestration",
+    "task-bus",
+    "a2ui",
+    "warm-paper",
+    "react",
+    "vite",
+    "nymrel",
+    "jalenbuilds"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

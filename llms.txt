@@ -22,3 +22,7 @@
 - Brand Accent & Highlights: Terracotta (#A8541F)
 - Border Accents: Warm Stone (#E2DDD2)
 - Verified Receipts: Sage Olive (#3B7A57)
+
+## Developer & Agent FAQ (Answer-First)
+- **What is Nymrel Swarm Studio?** A visual command center for multi-agent coding fleets integrating Google A2UI v0.8 streaming cards with Action Surety Merkle audit receipts and Warm Paper aesthetics.
+- **How does it enforce safety?** Intercepts destructive commands and file edits before execution, generating verifiable cryptographic receipts.
