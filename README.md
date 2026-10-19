@@ -77,3 +77,5 @@ Cloudflare Pages can consume `dist` through `wrangler.toml`, but provider access
 Read [SECURITY.md](SECURITY.md) before reporting a vulnerability or proposing an integration. Product and security claims must preserve the capability boundary above.
 
 Copyright © 2026 Nymrel. MIT licensed.
+
+<!-- verified: #21 -->
