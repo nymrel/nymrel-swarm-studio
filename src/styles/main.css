@@ -1099,6 +1099,33 @@ input {
 }
 
 /* Custom Scrollbars */
+.income-registry, .income-evidence { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.income-registry p, .income-registry li, .income-registry dd { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.income-registry h3 { font-size: 16px; margin: 0 0 8px; min-width: 0; overflow-wrap: anywhere; }
+.income-registry h4 { font-size: 14px; margin: 12px 0 6px; }
+.income-view-switch, .income-card-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.income-button, .income-controls input, .income-controls select {
+  font: inherit; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border-active);
+  border-radius: var(--radius-sm); color: var(--color-text-primary); background: var(--color-bg-surface);
+}
+.income-button { cursor: pointer; }
+.income-button[aria-pressed="true"] { background: var(--color-bg-code); color: var(--color-text-inverse); }
+.income-controls { display: flex; flex-wrap: wrap; gap: 16px; }
+.income-controls label { display: grid; gap: 6px; font-size: 13px; flex: 1 1 240px; min-width: 0; }
+.income-controls input, .income-controls select { width: 100%; min-width: 0; }
+.income-label, .income-lanes { color: var(--color-text-secondary); font-size: 12px; }
+.income-priorities, .income-claims, .income-gates { padding-left: 22px; }
+.income-priorities li, .income-claims li, .income-gates li { margin: 8px 0; }
+.income-source-link { display: inline; margin-left: 8px; }
+.income-registry a { color: #85401c; text-decoration: underline; text-underline-offset: 3px; }
+.income-registry summary { cursor: pointer; padding: 12px 0; min-height: 44px; font-size: 13px; font-weight: 700; }
+.income-registry details { margin-top: 12px; }
+.income-score-list { display: grid; gap: 12px; }
+.income-score-list dt { font-size: 13px; font-weight: 700; }
+.income-score-list dd { margin: 4px 0 0; }
+.income-sources > div { border-top: 1px solid var(--color-border-default); margin-top: 16px; padding-top: 8px; scroll-margin-top: 24px; }
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

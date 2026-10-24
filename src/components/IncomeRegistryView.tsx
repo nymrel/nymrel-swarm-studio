@@ -1,4 +1,5 @@
 import React from 'react';
+import { IncomeEvidenceView } from './IncomeEvidenceView';
 import { AlertCircle, Briefcase } from 'lucide-react';
 import {
   INCOME_REGISTRY_WAVE_1,
@@ -25,7 +26,7 @@ function laneList(lanes: string[]): React.ReactNode {
   );
 }
 
-export const IncomeRegistryView: React.FC = () => {
+const IncomeExamplesView: React.FC = () => {
   return (
     <div className="card-panel" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div className="section-header">
@@ -127,4 +128,18 @@ export const IncomeRegistryView: React.FC = () => {
       </div>
     </div>
   );
+};
+
+export const IncomeRegistryView: React.FC = () => {
+  const [view, setView] = React.useState<'evidence' | 'examples'>('evidence');
+  return <div className="income-registry">
+    <div className="income-view-switch" role="group" aria-label="Income registry data view">
+      <button type="button" className="income-button" aria-pressed={view === 'evidence'} onClick={() => setView('evidence')}>Evidence snapshot</button>
+      <button type="button" className="income-button" aria-pressed={view === 'examples'} onClick={() => setView('examples')}>Original illustrative examples</button>
+    </div>
+    {view === 'evidence' ? <div className="card-panel">
+      <h2 className="section-title">Income Opportunity Registry</h2>
+      <IncomeEvidenceView />
+    </div> : <IncomeExamplesView />}
+  </div>;
 };

@@ -39,7 +39,7 @@ export const App: React.FC = () => {
         <Info size={17} aria-hidden="true" />
         <div>
           <strong>Synthetic fixture · browser-only</strong>
-          <span>No agents, repositories, providers, telemetry, files, commands, sandboxes, or deployments are connected. Every interaction changes only in-memory example state.</span>
+          <span>No agents, repositories, providers, telemetry, files, commands, sandboxes, or deployments are connected. Scenarios are synthetic; the Income Registry also contains dated public research and labeled analyst estimates. Interactions change browser memory only.</span>
         </div>
       </aside>
 
@@ -142,7 +142,7 @@ export const App: React.FC = () => {
             <strong>Nymrel Swarm Studio</strong> · A <a href="https://nymrel.com" target="_blank" rel="noreferrer" style={{ color: 'var(--color-brand-terracotta)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>Nymrel</a> reference interface
           </div>
           <div>
-            Synthetic fixtures · no external side effects · MIT licensed · 2026
+            Synthetic scenarios · dated registry research · no external side effects · MIT licensed · 2026
           </div>
         </div>
       </footer>

@@ -56,6 +56,14 @@ const app = await read('src/App.tsx');
 requireText('src/App.tsx', app, 'Synthetic fixture · browser-only');
 requireText('src/App.tsx', app, 'No agents, repositories, providers, telemetry, files, commands, sandboxes, or deployments are connected.');
 
+const registry = await read('src/data/incomeEvidence.ts');
+requireText('src/data/incomeEvidence.ts', registry, 'No billing or revenue backend is connected.');
+const registryView = await read('src/components/IncomeEvidenceView.tsx');
+requireText('src/components/IncomeEvidenceView.tsx', registryView, 'not a forecast, confidence interval or measured revenue rank');
+const exampleView = await read('src/components/IncomeRegistryView.tsx');
+requireText('src/components/IncomeRegistryView.tsx', exampleView, 'Illustrative reference · no revenue or backend connected');
+requireText('src/components/IncomeRegistryView.tsx', exampleView, 'tabIndex={0}');
+
 const scanFiles = [
   'README.md',
   'SECURITY.md',
