@@ -1,8 +1,12 @@
 # Nymrel Swarm Studio
 
-Nymrel Swarm Studio is a private, fixture-driven reference interface for exploring multi-agent workspace, review, routing, and integrity-log patterns. It is a static React application. It does not connect to agents, repositories, model providers, telemetry, shells, filesystems, sandboxes, deployment platforms, or billing systems.
+Nymrel Swarm Studio is a public, MIT-licensed, fixture-driven reference interface for exploring multi-agent workspace, review, routing, and integrity-log patterns. It is a static React application. It does not connect to agents, repositories, model providers, telemetry, shells, filesystems, sandboxes, deployment platforms, or billing systems.
 
 The interface deliberately resembles an operator deck so interaction and information architecture can be evaluated before an integration exists. Every worker, path, event, cost, token count, decision, progress value, and hash is synthetic. Buttons update browser memory only.
+
+## Contribute
+
+Start with the [new contributor guide](docs/contributor-start.md) for setup, three scoped newcomer tasks, review expectations and contribution credit. First-time and AI-assisted contributions are welcome when the submitted work is understood and accurately validated. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full change requirements and [maintainer triage](docs/maintainer-triage.md) for the review process.
 
 ## Capability boundary
 
@@ -34,7 +38,7 @@ Treat any future integration as a separate security and product lane. Do not inf
 - Node.js 22.12 through 26; `.node-version` selects Node 24.20.0 for local work
 - npm 11
 
-Dependencies are exact-pinned in `package.json` and locked in `package-lock.json`. The application is marked `private`; it is not an npm package.
+Dependencies are exact-pinned in `package.json` and locked in `package-lock.json`. The npm application is marked `private` to prevent package publication; the GitHub source repository is public.
 
 ## Local verification
 

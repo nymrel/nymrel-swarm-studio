@@ -1,0 +1,28 @@
+name: Reproducible bug
+description: Report an observable problem in the static reference interface.
+title: "Bug: "
+body:
+  - type: markdown
+    attributes:
+      value: "Use synthetic data only. Report vulnerabilities privately through SECURITY.md. Search existing issues before submitting."
+  - type: input
+    id: revision
+    attributes:
+      label: Commit and environment
+      description: Include the commit, operating system, Node/npm and browser versions that you actually tested.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and expected behavior
+      description: Provide numbered steps, actual behavior, expected behavior and a minimal synthetic example.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and checks
+      description: List actual results or reasons not run. Redact tokens, personal paths and unrelated private data.
+    validations:
+      required: true

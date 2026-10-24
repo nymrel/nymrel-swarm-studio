@@ -1,0 +1,28 @@
+name: Scoped contribution proposal
+description: Propose a useful improvement before starting a larger change.
+title: "Proposal: "
+body:
+  - type: markdown
+    attributes:
+      value: "First-time and AI-assisted contributions are welcome. Read docs/contributor-start.md. A proposal does not establish a bounty, payment, assignment or merge commitment."
+  - type: input
+    id: related
+    attributes:
+      label: Related issue or PR
+      description: Link any overlapping work; write none found when you have searched and found none.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User outcome and bounded scope
+      description: Explain the problem, proposed files and behavior, explicit exclusions and how the synthetic browser-only boundary stays intact.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and validation
+      description: State the observable success conditions and tests or review evidence you propose. Distinguish planned checks from completed checks.
+    validations:
+      required: true
