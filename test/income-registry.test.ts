@@ -74,37 +74,38 @@ describe('Income Opportunity Registry fixture (illustrative excerpt)', () => {
     }
   });
 
-  it('scores a perfect fixture at the documented maximum and zeroed tiers below range', () => {
-    const perfect: IncomeScoreDimensions = {
-      demand: 5,
-      timeToFirstDollar: 5,
-      recurring: 5,
-      reuse: 5,
-      distribution: 5,
-      margin: 5,
-      fulfillment: 5,
-      proof: 5,
-    };
-    expect(computeWeightedScore(perfect)).toBe(REGISTRY_SCORING.maxScore);
-  });
+  const base: IncomeScoreDimensions = {
+    demand: 3,
+    timeToFirstDollar: 3,
+    recurring: 3,
+    reuse: 3,
+    distribution: 3,
+    margin: 3,
+    fulfillment: 3,
+    proof: 3,
+  };
+  const dimensionKeys = Object.keys(base) as (keyof IncomeScoreDimensions)[];
 
   it.each([
-    ['demand', 0],
-    ['proof', 6],
-    ['timeToFirstDollar', NaN],
-  ] as const)('rejects out-of-range dimension %s with value %p', (key, value) => {
-    const base: IncomeScoreDimensions = {
-      demand: 3,
-      timeToFirstDollar: 3,
-      recurring: 3,
-      reuse: 3,
-      distribution: 3,
-      margin: 3,
-      fulfillment: 3,
-      proof: 3,
-    };
-    const invalid = { ...base, [key]: value };
-    expect(() => computeWeightedScore(invalid)).toThrow(RangeError);
+    [1, 12],
+    [5, 60],
+  ])('scores all dimensions at %i as %i', (value, expected) => {
+    const dimensions = { ...base };
+    for (const key of dimensionKeys) dimensions[key] = value;
+    expect(computeWeightedScore(dimensions)).toBe(expected);
+  });
+
+  describe.each(dimensionKeys)('dimension %s', (key) => {
+    it.each([0, 6, NaN, Infinity, -Infinity])('rejects invalid value %p', (value) => {
+      expect(() => computeWeightedScore({ ...base, [key]: value })).toThrow(RangeError);
+    });
+
+    it('rejects a missing dimension at the runtime boundary', () => {
+      const incomplete: Partial<IncomeScoreDimensions> = { ...base };
+      delete incomplete[key];
+      // Simulate malformed external input that bypasses TypeScript's required fields.
+      expect(() => computeWeightedScore(incomplete as IncomeScoreDimensions)).toThrow(RangeError);
+    });
   });
 
   it('documents the scoring formula and maximum', () => {
