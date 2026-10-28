@@ -8,13 +8,28 @@ The packet contains 10 product/service descriptions, 17 researched platform rout
 
 ## Start here
 
-1. Complete Nymrel's service profile on **Clutch and Goodfirms** through an existing company account, using the company copy below. Both have a documented free basic route. Confirm legal/company facts and project permissions before submitting.
-2. Search **MCP.so and Smithery** for the exact existing public-tools endpoint, then use MCP.so's free review route or inspect Smithery's available route and terms. Require a successful public endpoint/tool demonstration first. Keep the public utilities separate from private Remote or studio operations.
+1. Continue the **Clutch and Goodfirms** free company-profile handoff below using an existing verified company account and the prepared copy. October 28 attempts reached sign-in; no profile was submitted. Reconcile account-side duplicates and confirm missing publishable company facts before submitting.
+2. Prepare **Official MCP Registry** remote-only metadata in the existing public-tools source after verifying the intended namespace/account. Defer **MCP.so** under the free-only scope and defer Smithery's outgoing publishing workflow; the October 28 findings below supersede the earlier recommendations. Keep the four anonymous utilities distinct from the protected Remote surface.
 3. Update existing **Glama** entries before adding a duplicate. Public pages already exist for Nymrel Agent, MCP Hub, and Local Agent Forge. They are different products from the four-tool public utility connection.
 4. Use **AlternativeTo and SaaSHub** for one demonstrated software product at a time. Choose real competitors only after comparing the current feature set. Do not describe the whole studio as a software alternative.
 5. Reserve **Product Hunt, Peerlist, Show HN, DEV, and LinkedIn publishing** for a working demonstration, the appropriate account, and current publication/history checks. This packet contains directory/profile descriptions, not social posts staged for publication.
 
 These are execution priorities based on fit and preparation cost, not measured demand or predicted revenue. No unattended schedule has been created.
+
+## Distribution follow-through — October 28, 2026
+
+The [existing distribution execution receipt](https://github.com/nymrel/nymrel-swarm-studio/issues/21#issuecomment-6478794154) records these dated observations. This amendment reconciles that public receipt; it is not a new platform probe or submission.
+
+- **Clutch and Goodfirms:** free basic routes were verified, but both attempts stopped at sign-in. No authenticated account or unpublished-profile ownership was established. Public/site searches returned no match for Nymrel or JalenBuilds; those misses do not prove no account or pending profile exists. Submission IDs and approved listing URLs remain unavailable.
+- **Company facts:** confirm the publishable business location/address, phone, founding year, employee range, and actual rate/minimum engagement or a permitted undisclosed option. Reuse the existing copy and canonical work link. Clutch permits leaving portfolio items blank; do not invent a portfolio requirement or client evidence. Keep credentials and private contact details out of this public packet.
+- **MCP.so:** the current remote and repository submission forms showed a **$39 one-time paid submission**. No free-review action was available in the inspected form. Defer; no purchase or submission is authorized by this packet.
+- **Smithery:** its [current announcement](https://smithery.ai/future) says accounts, API, CLI/SDK and proxy/connection services shut down **October 31, 2026**. A curated directory with direct vendor URLs remains; its new intake and cost are unverified. Do not use older publishing docs to start the outgoing workflow.
+- **Glama:** reconcile existing source listings and authenticated connector inventory before any separate public-utility entry. Ownership and final free terms remain unverified; no Glama hosting is needed.
+- **Official MCP Registry:** remote-only metadata can point at the existing endpoint without new hosting or package publication. The receipt's October 28, 19:38:20 UTC search returned no Nymrel server rows; this does not prove namespace availability. Namespace authentication, validated metadata, version and an actual publish receipt remain pending. No fee was documented in the retrieved workflow; spending is not authorized.
+
+The same receipt records a credential-free session at **October 28, 18:23:59 UTC** against `https://mcp.nymrel.com/mcp`: initialization and tool listing succeeded; the advertised 11-tool surface comprised **four anonymous utilities and seven OAuth-protected Remote read tools**. `nymrel_social_clip_score` completed successfully with synthetic text. No Remote tool was invoked. This establishes that bounded endpoint observation, not directory approval, every utility's functionality, security clearance, or universal host acceptance.
+
+New external submissions: **0**. Newly approved/public placements: **0 verified**. Attribution, customers and revenue remain unknown. Continue in #21 with actual account, submission and approval receipts; the wider revenue goal remains open.
 
 ## Public-source recheck — October 27, 2026
 
@@ -86,13 +101,13 @@ This paragraph is grounded in the published [AI Products & Automation scope](htt
 
 | Platform | Use this prepared material | Action and unresolved gate |
 | --- | --- | --- |
-| Clutch | Company full description + website/app service categories + brief URL | Claim/check existing company profile, establish mandatory company facts, attach authorized work. Free basic route; no sponsorship purchase. |
-| Goodfirms | Company description + website/automation summaries | Check existing company identity, complete required fields and portfolio permissions, submit basic free profile. |
+| Clutch | Company full description + website/app service categories + brief URL | October 28 attempt stopped at sign-in. Verify existing account/profile and company facts, then use free basic route. Portfolio may be left blank; no sponsorship purchase. |
+| Goodfirms | Company description + website/automation summaries | October 28 attempt stopped at sign-in. Verify existing company account/profile, required facts and any assets actually supplied, then submit basic free profile. |
 | DesignRush | Company description + verified public work examples | Inspect application/account and actual cost before submission; no guessed budget/rate fields. |
 | Sortlist | Website and automation service summaries | Provider account and plan terms need inspection; no paid opportunity plan assumed. |
 | LinkedIn | Company description for About/Services fields | Use existing page and verified admin. Reconcile current profile and publishing history before any new social content. No post supplied here. |
-| MCP.so | Nymrel MCP Tools card; technical blurb below | Search exact name/endpoint, verify tools, inspect remote-server form and use free review route. |
-| Smithery | Nymrel MCP Tools card + public endpoint/source | Verify namespace ownership, Streamable HTTP and one successful tool call. No new hosting/paid plan assumed. |
+| MCP.so | Nymrel MCP Tools card; technical blurb below | Defer: October 28 forms showed $39 one-time paid submission, with no free-review action. No purchase or submission. |
+| Smithery | Nymrel MCP Tools card + public endpoint/source | Defer outgoing account/API publishing workflow ahead of October 31 shutdown. New curated-directory intake and cost remain unverified. |
 | Glama | Existing Nymrel Agent/Hub/Forge listings | Correct the corresponding source/listing only after current tool-count and ownership reconciliation. Do not overwrite one product's description with another's. |
 | Official MCP Registry | Technical blurb below; verified public remote URL | Resolve current namespace/version, generate and validate current server metadata with official tooling. No registration/publish receipt exists. |
 | AlternativeTo | A selected software card, such as GoViral or MyCaddie | Verify current usable feature set and actual alternatives. Verified email required. Normal review route; no paid priority purchase. |
@@ -110,7 +125,7 @@ This paragraph is grounded in the published [AI Products & Automation scope](htt
 
 **Registry-length description:** Website audits, domain ideas, golf bag gaps, and clip-hook text checks.
 
-**Summary:** Four public utilities over Nymrel's hosted MCP connection: website audits, domain finding, golf bag gaps, and clip-hook text checks. Connection instructions and scope are documented at nymrel.com/mcp. Keep private Remote reads and studio intake outside this public listing.
+**Summary:** Four anonymous public utilities over Nymrel's hosted MCP connection: website audits, domain finding, golf bag gaps, and clip-hook text checks. Connection instructions and scope are documented at nymrel.com/mcp. The same endpoint also advertises seven OAuth-protected Remote read tools; these are not anonymous utilities. Keep private Remote data and studio intake outside the public listing copy.
 
 **Public remote endpoint:** https://mcp.nymrel.com/mcp
 
@@ -118,7 +133,7 @@ This paragraph is grounded in the published [AI Products & Automation scope](htt
 
 **Tool names from source:** `nymrel_audit_website`, `nymrel_find_domain`, `nymrel_golf_bag_gap`, `nymrel_social_clip_score`.
 
-**Launch gate:** confirm the current advertised tool list and complete a real successful public tool call. This packet does not certify transport, target-host acceptance, or directory approval. No `server.json` is claimed validated or published.
+**Launch gate:** review the dated October 28 endpoint evidence above and recheck current functionality before a submission. That receipt proves one anonymous utility call, not every utility or target-host acceptance. Reconcile namespace/account and existing listing history; no `server.json` is claimed validated or published, and no directory approval is established.
 
 ## Measurement after real distribution
 
@@ -269,14 +284,14 @@ Nymrel builds web apps, business tools, and AI automation around a defined job. 
 
 # Nymrel distribution routes — public research
 
-Observed 2026-10-26 UTC. This is platform research, not a submission receipt. No accounts, paid plans, posts, or listings were created. A search miss means “not found by this bounded query,” never “no listing exists.” Platform audience/performance claims were not independently verified and are not used as forecasts.
+Initially observed 2026-10-26 UTC; MCP and service-profile handoffs below incorporate the dated October 28 execution receipt linked above. Unchanged platform research retains its original date. No accounts, paid plans, posts, or listings were created. A search miss means “not found by this bounded query,” never “no listing exists.” Platform audience/performance claims were not independently verified and are not used as forecasts.
 
 ## Five practical actions
 
 1. **Update existing Glama listings before duplicating them.** Nymrel Agent, MCP Hub, and Local Agent Forge already have public pages. Agent's page metadata describes two tools while its indexed README describes five. Reconcile current source and listing metadata, then use the existing admin/ownership route. Listing presence does not prove current endpoint or install behavior.
-2. **Submit the public tools MCP to MCP.so's free review route**, if no existing listing is found in the site's own search and current product/endpoint evidence is ready. The platform supports remote-server and ordinary server submissions. Avoid Premium checkout.
+2. **Prepare Official MCP Registry remote-only metadata in the existing public-tools source**, after verifying intended namespace/account and current endpoint evidence. Validate with official tooling before any authenticated publication. MCP.so's inspected form now requires $39; defer it under the free-only scope. Defer Smithery's outgoing publishing workflow.
 3. **Prepare one software listing each for AlternativeTo and SaaSHub**, using a specific usable product rather than the whole studio catalog. AlternativeTo requires email verification. SaaSHub prioritizes domain-email verification and requires meaningful categories/competitors.
-4. **Create or complete Nymrel service profiles on Clutch and Goodfirms**, using free plans and verified company facts. Do not fabricate team size, address, client references, project budgets, or reviews.
+4. **Continue the existing Clutch and Goodfirms sign-in/company-facts handoff**, then reconcile account-side duplicates and use free profiles. Neither October 28 attempt submitted a profile. Do not fabricate team size, address, client references, project budgets, or reviews.
 5. **Check for and use an existing Nymrel LinkedIn company page, if verified, for the service offer and one concrete product demo**, then plan a Product Hunt or Peerlist launch around a selected usable product and actual maker participation. An account/admin check is needed before acting.
 
 ## Tools and MCP
@@ -284,9 +299,9 @@ Observed 2026-10-26 UTC. This is platform research, not a submission receipt. No
 | Platform | Official route and current mechanics | Cost/account boundary | Fit and next check |
 |---|---|---|---|
 | Glama | [FAQ](https://glama.ai/mcp/faq): servers page → Add MCP Server → GitHub repo. Remote connectors use public endpoint; only healthy connectors indexed. Automated license/security/health checks. | Ownership verification through domain or GitHub account. Listing charge not stated in retrieved FAQ. Hosting/gateway is a separate product. | Existing pages below; update rather than duplicate. Verify public tools endpoint separately from internal hub or local-only software. |
-| Smithery | [Publish docs](https://smithery.ai/docs/build/publish), [new server](https://smithery.ai/new). Public HTTPS URL needs Streamable HTTP; OAuth if required. Local stdio distributed as MCPB bundle. Public server scan extracts metadata; auth server requires authentication or static server card. | Publishing account/namespace access required; price not established by this read. Do not create hosting or buy a plan. | Public tools endpoint can be a candidate once transport, correct identity, and namespace custody are proven. Do not expose a private endpoint. |
-| MCP.so | [Submit](https://mcp.so/submit); exact [remote-server form](https://mcp.so/submit?type=remote-server), [server form](https://mcp.so/submit?type=server). Official indexed page says free review vs immediate Premium publication. | Free route available per official search result; account and all form fields require interactive inspection. | Strong low-cost candidate for public utility endpoint; perform site search first. |
-| Official MCP Registry | [Publishing quickstart](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/quickstart.mdx). `mcp-publisher` validates and publishes metadata. Remote-only entries can omit packages and provide public `remotes`; package entries need registry artifacts and ownership metadata. Description ≤100 characters. | GitHub/domain namespace verification; npm or other registry account for package routes. Metadata registry, not hosting. Preview state noted by current docs. | Prepare validated `server.json` only from verified current source. Existing namespace/version must be resolved before write. Does not certify control of remote URL. |
+| Smithery | [Current announcement](https://smithery.ai/future), checked October 28: accounts, API, CLI/SDK and proxy/connection services shut down October 31, 2026. Curated directory with direct vendor URLs remains. | New curated-directory intake and cost unverified. Older publishing docs describe the outgoing flow. No new account, hosting or API integration. | Defer outgoing workflow; verify future curated intake before considering it. Do not expose a private endpoint. |
+| MCP.so | [Submit](https://mcp.so/submit); [remote-server form](https://mcp.so/submit?type=remote-server) and [server form](https://mcp.so/submit?type=server), inspected October 28. Both showed $39 one-time paid submission; no free-review action was available. | Paid route; the earlier indexed free-review recommendation is superseded. No spend authorized. | Defer under the free-only scope. No purchase or submission. |
+| Official MCP Registry | [Publishing quickstart](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/quickstart.mdx). `mcp-publisher` validates and publishes metadata. Remote-only entries can omit packages and provide public `remotes`; package entries need registry artifacts and ownership metadata. Description ≤100 characters. | GitHub/domain namespace verification; npm or other registry account for package routes. Metadata registry, not hosting. Preview state documented. No fee documented in retrieved workflow; no spend authorized. | Prepare validated `server.json` in the existing public-tools source. October 28 search returned no Nymrel rows, not proof of namespace availability. Resolve namespace/version and use actual authenticated publication; no publish receipt exists. |
 
 Existing public listings found in bounded research:
 
@@ -308,7 +323,7 @@ Existing public listings found in bounded research:
 
 | Platform | Official route and mechanics | Cost/account boundary | Facts to establish before submission |
 |---|---|---|---|
-| Clutch | [Get listed](https://clutch.co/get-listed), [help](https://help.clutch.co/en/knowledge/get-listed-on-clutch). Company profile and client reviews are separate. | Basic profile free; account/company control required. Do not buy sponsorship. | Actual legal/trading name, website, services, location, minimum project/rate fields if demanded, rights-cleared portfolio. Reviews only from real clients. |
+| Clutch | [Get listed](https://clutch.co/get-listed), [help](https://help.clutch.co/en/knowledge/get-listed-on-clutch). October 28 Basic action reached sign-in; authenticated editor remains uninspected. Company profile and client reviews are separate. | Basic profile free; existing account/company control unverified. Do not buy sponsorship. | Confirm actual legal/trading name, website, services, location, phone, founding year, staff and rate/minimum fields where required. [Portfolio guidance](https://help.clutch.co/en/knowledge/what-are-portfolio-items) permits leaving items blank. Reviews only from real clients. |
 | Goodfirms | [Get listed](https://www.goodfirms.co/get-listed), [free-listing help](https://help.goodfirms.co/is-it-free-to-get-listed-on-goodfirms/). Research verification and company profile/portfolio. | Free $0 forever, no card required per fetched current page; PRO $49/mo billed annually and sponsorship are separate. | Accurate company and service scope; await activation/review. Vendor claims about AI discovery/reach are unverified. |
 | DesignRush | [Benefits and submission pointer](https://www.designrush.com/benefits). Agency listing; company dashboard, service expertise, location, rates, team/client portfolio. | Price not established by read; inspect actual application before committing. | Nymrel agency/service offer only; preserve unknown headcount/rates/location. |
 | Sortlist | [Join](https://www.sortlist.com/join): select “I'm a provider, looking for projects” and register business. | Price and feature limits not established; do not enter paid opportunities plan automatically. | Website/app/automation service agency; verified company facts required. |
