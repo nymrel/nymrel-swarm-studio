@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSwarmStore } from '../state/swarmStore';
 import type { LogFilter } from '../state/swarmStore';
 import type { ScenarioEvent } from '../types';
+import { filterScenarioLogs } from '../state/filterScenarioLogs';
 import { 
   ShieldCheck, 
   Search, 
@@ -31,24 +32,7 @@ export const ScenarioIntegrityLog: React.FC = () => {
     }
   };
 
-  const filteredLogs = state.scenarioLogs.filter(log => {
-    // 1. Filter by decision type
-    if (state.logFilter === 'ALLOW' && log.decision !== 'ALLOW') return false;
-    if (state.logFilter === 'BLOCK' && log.decision !== 'BLOCK') return false;
-    if (state.logFilter === 'HASHES' && !log.localDigest.locallyConsistent) return false;
-
-    // 2. Filter by search query
-    if (state.searchQuery.trim()) {
-      const q = state.searchQuery.toLowerCase();
-      const matchTarget = log.target.toLowerCase().includes(q);
-      const matchAgent = log.agentName.toLowerCase().includes(q);
-      const matchRule = log.policyRule.toLowerCase().includes(q);
-      const matchHash = log.localDigest.leafHash.toLowerCase().includes(q);
-      return matchTarget || matchAgent || matchRule || matchHash;
-    }
-
-    return true;
-  });
+  const filteredLogs = filterScenarioLogs(state.scenarioLogs, state.logFilter, state.searchQuery);
 
   const getActionIcon = (actionType: ScenarioEvent['actionType']) => {
     switch (actionType) {

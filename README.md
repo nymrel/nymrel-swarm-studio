@@ -30,10 +30,10 @@ Treat any future integration as a separate security and product lane. Do not inf
 
 ## Stack
 
-- React 19.2
+- React 19.3
 - Vite 8 with the React/Oxc plugin
 - TypeScript 7 in strict mode
-- Vitest 4 with V8 coverage
+- Vitest 5 with V8 coverage
 - Oxlint
 - Node.js 22.12 through 26; `.node-version` selects Node 24.20.0 for local work
 - npm 11

@@ -1,14 +1,14 @@
 # Nymrel Swarm Studio
 
-Nymrel Swarm Studio is a private, static, fixture-driven React reference interface maintained by Nymrel.
+Nymrel Swarm Studio is a public, static, fixture-driven React reference interface maintained by Nymrel.
 
 ## Verified repository facts
 
 - Source: https://github.com/nymrel/nymrel-swarm-studio
 - License: MIT
-- Stack: React 19, Vite 8, TypeScript 7, Vitest 4, Oxlint, npm 11
+- Stack: React 19, Vite 8, TypeScript 7, Vitest 5, Oxlint, npm 11
 - Output: static files in `dist`
-- Data: bundled synthetic fixtures only
+- Data: bundled synthetic fixtures and a dated public research snapshot with labeled analyst estimates
 - Persistence: none
 - Application network requests: none
 - External agents, repositories, providers, telemetry, files, commands, sandboxes, deployments, billing, customers, and revenue: not connected
