@@ -353,6 +353,7 @@ input {
 
 /* Cards & Surfaces */
 .card-panel {
+  min-width: 0;
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
@@ -407,7 +408,7 @@ input {
 
 @media (max-width: 1180px) {
   .deck-grid-top, .deck-grid-main {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -945,6 +946,19 @@ input {
   .nav-tab-btn {
     justify-content: center;
     padding-inline: 6px;
+  }
+
+  .scenario-card-meta,
+  .scenario-card-meta > div,
+  .file-row > div {
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .scenario-card-meta .hardware-tag,
+  .file-row > div {
+    overflow-wrap: anywhere;
   }
 
   .fixture-root-strip {
