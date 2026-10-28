@@ -26,10 +26,21 @@ To submit changes, fork the repository, clone your fork, create a focused branch
 | Task | Starting point | Useful outcome |
 | --- | --- | --- |
 | [Search whitespace regression](https://github.com/nymrel/nymrel-swarm-studio/issues/33) | `src/components/ScenarioIntegrityLog.tsx` | Padded searches behave consistently, with a real regression test |
-| [Score boundary tests](https://github.com/nymrel/nymrel-swarm-studio/issues/34) | `test/income-registry.test.ts` | Direct-source tests protect valid totals and invalid numeric inputs |
 | [Independent quickstart reproduction](https://github.com/nymrel/nymrel-swarm-studio/issues/35) | README and CONTRIBUTING | A truthful clean-clone report or a reproduced documentation fix |
 
-Check the issue and open PRs before starting. A short approach comment helps avoid duplicate work; it is not an exclusive claim, payment promise, or requirement to wait before investigating a bug. Broader ideas are welcome as scoped proposals.
+Check the issue and open PRs before starting. A short approach comment helps avoid duplicate work; it is not an exclusive claim, payment promise, or requirement to wait before investigating a bug. A successful reproduction is useful too; no cosmetic PR is needed for a report. [Score boundary coverage #34](https://github.com/nymrel/nymrel-swarm-studio/issues/34) already has [dbdefault's contribution #38](https://github.com/nymrel/nymrel-swarm-studio/pull/38), preserved in this onboarding integration; please avoid duplicating it.
+
+## Bring an original idea
+
+Ideas we have not thought of are welcome, including opportunities that span Nymrel projects. Describe the problem or opportunity, who could benefit, and what you are unsure about. Hypotheses, examples and a smallest experiment are helpful when you have them. Code, proposed files, a finished specification and acceptance criteria are not prerequisites for an early idea.
+
+Use the contribution proposal form or an existing related issue. For an idea spanning repositories, keep one proposal in the most relevant repository and link the other projects rather than opening duplicates. Maintainers can help turn a promising idea into a bounded experiment. Build-ready proposals should then identify scope, observable acceptance and planned validation; review and release requirements still apply.
+
+## Contribute from a phone or through an agent
+
+You can report an observation, ask a question or propose an idea through GitHub on your phone without setting up a development machine. For a mobile observation, include the page or source revision if known, device/browser, viewport if known, steps and what you actually saw. Redact private information. This is useful feedback; it does not establish the full clean-clone acceptance in #35 or a live backend.
+
+Agents can use their supported development environment and the same contribution requirements. Disclose meaningful AI assistance, understand the submitted changes and report the checks actually run. Neither a human nor an agent needs private studio credentials to contribute to this reference interface.
 
 ## What makes a useful pull request
 
@@ -44,6 +55,8 @@ AI-assisted contributions are welcome. The submitter remains responsible for und
 Maintainers inspect the diff and dependency/workflow changes before approving fork CI. A held workflow is pending, not passed or failed. See [the maintainer review guide](maintainer-triage.md) and [CONTRIBUTING](../CONTRIBUTING.md).
 
 Accepted external work is credited through original commit ancestry or accurate co-authorship and release notes. [LORDSINE's registry contribution](https://github.com/nymrel/nymrel-swarm-studio/pull/25) was incorporated through [maintainer integration #27](https://github.com/nymrel/nymrel-swarm-studio/pull/27); it remains an illustrative five-row fixture, not verified revenue evidence.
+
+[dbdefault's score-boundary tests](https://github.com/nymrel/nymrel-swarm-studio/pull/38) cover both endpoints, invalid numeric values across all eight dimensions and missing fields. Their original commits are retained in this maintainer integration; the contributor-closed PR remains available as the original discussion.
 
 An issue label, third-party bounty listing, bot claim, submitted wallet address or merged PR does not create a payment commitment. Work is unpaid unless a maintainer explicitly publishes approved funding terms for that issue before the work is accepted.
 

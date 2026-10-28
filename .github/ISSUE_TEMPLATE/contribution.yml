@@ -1,28 +1,34 @@
-name: Scoped contribution proposal
-description: Propose a useful improvement before starting a larger change.
+name: Idea or contribution proposal
+description: Share an early idea, question or implementation-ready improvement.
 title: "Proposal: "
 body:
   - type: markdown
     attributes:
-      value: "First-time and AI-assisted contributions are welcome. Read docs/contributor-start.md. A proposal does not establish a bounty, payment, assignment or merge commitment."
+      value: "First-time and AI-assisted contributions are welcome. Early ideas do not need code, a finished specification, proposed files or acceptance criteria. Read docs/contributor-start.md. Use one linked proposal for cross-repository ideas. A proposal does not establish a bounty, payment, assignment or merge commitment."
   - type: input
     id: related
     attributes:
       label: Related issue or PR
-      description: Link any overlapping work; write none found when you have searched and found none.
-    validations:
-      required: true
+      description: Link overlapping work or relevant Nymrel projects if known. Keep cross-repository discussion in one proposal.
   - type: textarea
     id: outcome
     attributes:
-      label: User outcome and bounded scope
-      description: Explain the problem, proposed files and behavior, explicit exclusions and how the synthetic browser-only boundary stays intact.
+      label: Problem or opportunity and who could benefit
+      description: Explain what could be better and for whom. An early idea or question is enough; no implementation is required.
     validations:
       required: true
   - type: textarea
-    id: acceptance
+    id: questions
     attributes:
-      label: Acceptance and validation
-      description: State the observable success conditions and tests or review evidence you propose. Distinguish planned checks from completed checks.
-    validations:
-      required: true
+      label: Hypotheses and open questions
+      description: What might work, what is uncertain, and what would help you explore it? Optional.
+  - type: textarea
+    id: experiment
+    attributes:
+      label: Smallest experiment or example
+      description: If you have one, describe a small way to learn whether the idea helps. Optional; distinguish proposals from completed work.
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Build-ready scope and validation
+      description: For an implementation-ready proposal, identify affected behavior/files, exclusions, observable acceptance and planned checks. Preserve the synthetic browser-only boundary. Leave blank for an early idea; full review and validation apply before integration.

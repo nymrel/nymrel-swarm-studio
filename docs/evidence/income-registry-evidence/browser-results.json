@@ -1,0 +1,86 @@
+{
+  "browser": "153.0.8010.0",
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "errors": [],
+      "externalRequests": [],
+      "exampleScroll": {
+        "left": 0,
+        "width": 1348,
+        "content": 1348
+      },
+      "axe": [
+        {
+          "view": "snapshot",
+          "violations": []
+        },
+        {
+          "view": "expanded",
+          "violations": []
+        },
+        {
+          "view": "examples",
+          "violations": []
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "errors": [],
+      "externalRequests": [],
+      "exampleScroll": {
+        "left": 2,
+        "width": 310,
+        "content": 849
+      },
+      "axe": [
+        {
+          "view": "snapshot",
+          "violations": []
+        },
+        {
+          "view": "expanded",
+          "violations": []
+        },
+        {
+          "view": "examples",
+          "violations": []
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "errors": [],
+      "externalRequests": [],
+      "exampleScroll": {
+        "left": 2,
+        "width": 240,
+        "content": 849
+      },
+      "axe": [
+        {
+          "view": "snapshot",
+          "violations": []
+        },
+        {
+          "view": "expanded",
+          "violations": []
+        },
+        {
+          "view": "examples",
+          "violations": []
+        }
+      ]
+    }
+  ]
+}

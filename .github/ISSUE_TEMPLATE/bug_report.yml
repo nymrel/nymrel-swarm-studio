@@ -9,7 +9,7 @@ body:
     id: revision
     attributes:
       label: Commit and environment
-      description: Include the commit, operating system, Node/npm and browser versions that you actually tested.
+      description: Include the commit or page if known, operating system/device and browser. For a local build include Node/npm; for a phone observation include viewport if known. Mark unknown or not run honestly.
     validations:
       required: true
   - type: textarea

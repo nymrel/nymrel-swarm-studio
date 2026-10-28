@@ -6,7 +6,7 @@ The interface deliberately resembles an operator deck so interaction and informa
 
 ## Contribute
 
-Start with the [new contributor guide](docs/contributor-start.md) for setup, three scoped newcomer tasks, review expectations and contribution credit. First-time and AI-assisted contributions are welcome when the submitted work is understood and accurately validated. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full change requirements and [maintainer triage](docs/maintainer-triage.md) for the review process.
+Start with the [new contributor guide](docs/contributor-start.md) for small tasks, original ideas, mobile observations, setup and contribution credit. You can suggest a problem or opportunity before you have code or a finished specification. First-time and AI-assisted contributions are welcome; describe what you actually checked. See [CONTRIBUTING.md](CONTRIBUTING.md) for build requirements and [maintainer triage](docs/maintainer-triage.md) for the review process.
 
 ## Capability boundary
 
