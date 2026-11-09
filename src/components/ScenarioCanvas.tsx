@@ -29,7 +29,7 @@ export const ScenarioCanvas: React.FC = () => {
     <div className="card-panel">
       <div className="section-header">
         <div>
-          <h2 className="section-title">
+          <h2 className="section-title" id="review-scenarios" tabIndex={-1}>
             <Sparkles size={18} color="#A8541F" />
             Interactive review fixtures
           </h2>
@@ -125,7 +125,7 @@ const ApprovalGateItem: React.FC<{ card: ApprovalGateCard; store: SwarmStore }> 
 
       {/* Approval Actions */}
       {isPending && (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', paddingTop: '4px' }}>
+        <div className="approval-actions">
           <button 
             className="btn btn-secondary btn-sm"
             onClick={() => store.sandboxGate(card.id)}
