@@ -22,6 +22,12 @@ import {
 export const App: React.FC = () => {
   const [state, store] = useSwarmStore();
 
+  const exploreReview = () => {
+    store.setActiveTab('deck');
+    if (store.getState().isPlaybackRunning) store.togglePlayback();
+    requestAnimationFrame(() => document.getElementById('review-scenarios')?.focus());
+  };
+
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
     { id: 'deck', label: 'Scenario Deck', icon: <LayoutDashboard size={15} aria-hidden="true" /> },
     { id: 'topology', label: 'Example Topology', icon: <Network size={15} aria-hidden="true" /> },
@@ -45,6 +51,26 @@ export const App: React.FC = () => {
 
       {/* Main Workspace Area */}
       <main className="main-content">
+        <section className="start-guide" aria-labelledby="start-guide-title">
+          <h2 id="start-guide-title">Choose where to start</h2>
+          <div className="start-guide-grid">
+            <article>
+              <h3>Explore without code</h3>
+              <p>Try a sample decision. Playback pauses so you can read at your own pace. Your choices stay in this tab until you reset or reload.</p>
+              <button className="btn btn-primary" type="button" onClick={exploreReview}>Try a sample decision</button>
+            </article>
+            <article>
+              <h3>Build a review interface</h3>
+              <p>Inspect the React components and source tests, then adapt a pattern to your own backend.</p>
+              <a className="btn btn-secondary" href="https://github.com/nymrel/nymrel-swarm-studio/blob/main/docs/contributor-start.md">Developer starting points</a>
+            </article>
+            <article>
+              <h3>Use an agent</h3>
+              <p>Read the machine context before reviewing source. This demo offers no API or MCP connection and cannot receive agent tasks.</p>
+              <a className="btn btn-secondary" href="https://github.com/nymrel/nymrel-swarm-studio/blob/main/llms.txt">Read agent context</a>
+            </article>
+          </div>
+        </section>
         {/* Navigation Tabs */}
         <nav className="nav-tab-deck" aria-label="Studio Views">
           {tabs.map((tab) => (
