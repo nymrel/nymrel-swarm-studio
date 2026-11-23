@@ -138,81 +138,25 @@ export type ScenarioActionType =
   | 'ast_patch' 
   | 'sandbox_escape_attempt';
 
-export type ScenarioDecision = 'ALLOW' | 'BLOCK' | 'SANDBOX' | 'INTERCEPT';
+export type ScenarioDecision = 'ALLOW' | 'BLOCK' | 'SANDBOX';
 
-export interface LocalIntegrityDigest {
-  leafHash: string;
-  blockHeight: number;
-  parentRoot: string;
-  currentRoot: string;
-  locallyConsistent: boolean;
-  timestamp: number;
-}
-
-export interface ScenarioEvent {
+export interface IncomeOpportunityRegistryItem {
   id: string;
-  timestamp: number;
-  agentId: string;
-  agentName: string;
-  actionType: ScenarioActionType;
-  target: string;
-  decision: ScenarioDecision;
-  policyRule: string;
-  riskScore: number; // 0 - 100
-  payloadSummary: string;
-  localDigest: LocalIntegrityDigest;
-}
-
-export interface TokenEfficiencyStats {
-  localGpuTokens: number;
-  edgeWorkersTokens: number;
-  meteredFrontierTokens: number;
-  totalTokens: number;
-  estimatedCostSpent: number;
-  frontierBaselineCost: number;
-  dollarsSaved: number;
-  efficiencyScore: number;
-}
-
-export interface WorkspaceFile {
-  path: string;
-  name: string;
-  status: 'modified' | 'created' | 'deleted' | 'staged' | 'sandboxed';
-  linesAdded: number;
-  linesRemoved: number;
-  lastModifiedByAgent: string;
-  diffPreview: string;
-  lastModified: number;
-}
-
-export interface SwarmTopologyLink {
-  source: string;
-  target: string;
-  protocol: 'gRPC' | 'SSE' | 'SharedMemory' | 'HTTP2';
-  messagesPerSecond: number;
-}
-
-export type RevenueClass = 'Cash now' | 'Recurring' | 'Recurring / marketplace' | 'Recurring / API';
-
-export interface IncomeScoreDimensions {
-  demand: number; // 1-5: current market/customer evidence
-  timeToFirstDollar: number; // 1-5: time to first dollar (5 = shortest)
-  recurring: number; // 1-5: quality of recurring/usage revenue
-  reuse: number; // 1-5: existing Nymrel code/data/proof reused
-  distribution: number; // 1-5: existing channel/audience/marketplace access
-  margin: number; // 1-5: expected digital gross margin
-  fulfillment: number; // 1-5: operational burden (5 = low burden)
-  proof: number; // 1-5: credible demos, production evidence, case studies, customers
-}
-
-export interface IncomeLaneEntry {
-  id: string;
-  asset: string;
-  incomeLanes: string[];
-  commercialState: string;
+  assetCapability: string;
+  strongestIncomeLanes: string[];
+  currentCommercialState: string;
   primaryBlocker: string;
   nextRevenueAction: string;
-  class: RevenueClass;
-  /** Illustrative scoring example only — not verified revenue or customer evidence. */
-  illustrativeScore?: IncomeScoreDimensions;
+  classTag: string;
+  scores: {
+    demand: number;       // 1-5
+    ttfDollars: number;   // 1-5
+    recurring: number;    // 1-5
+    reuse: number;        // 1-5
+    distribution: number; // 1-5
+    margin: number;       // 1-5
+    fulfillment: number;  // 1-5
+    proof: number;        // 1-5
+  };
+  weightedExecutionScore: number;
 }
