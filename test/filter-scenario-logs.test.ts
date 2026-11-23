@@ -32,4 +32,26 @@ describe('filterScenarioLogs', () => {
     }
     expect(filterScenarioLogs(logs, 'ALL', 'no-such-record')).toEqual([]);
   });
+
+  it('verifies Income Opportunity Registry search and mapping for studio assets across digital revenue lanes', () => {
+    const registryTerm = 'income-opportunity-registry';
+    const revenueLaneTerm = 'digital-revenue-lane';
+
+    const customLogs = [
+      ...logs,
+      {
+        ...first,
+        id: 'io-reg-1',
+        target: 'income-opportunity-registry-asset-100',
+        agentName: 'RegistryAgent',
+        policyRule: 'map-studio-assets',
+      },
+    ];
+
+    const results = filterScenarioLogs(customLogs, 'ALL', registryTerm);
+    expect(results.some(log => log.target.includes('income-opportunity-registry'))).toBe(true);
+
+    const laneResults = filterScenarioLogs(customLogs, 'ALL', revenueLaneTerm);
+    expect(laneResults).toEqual([]);
+  });
 });
